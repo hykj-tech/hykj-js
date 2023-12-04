@@ -1,0 +1,5 @@
+packages:
+  - vanillajs
+  - vue3/packages/*
+  - vue3/hooks
+  - vue3/play
