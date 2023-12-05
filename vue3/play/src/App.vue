@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
-import {TestCP} from '@hykj-js/vue3-element-plus'
+import {TestCp} from '@hykj-js/vue3-element-plus'
 </script>
 
 <template>
@@ -11,7 +11,7 @@ import {TestCP} from '@hykj-js/vue3-element-plus'
     <a href="https://vuejs.org/" target="_blank">
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
-    <TestCP> </TestCP>
+    <TestCp> </TestCp>
   </div>
   <HelloWorld msg="Vite + Vue" />
 </template>

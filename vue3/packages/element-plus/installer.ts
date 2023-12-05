@@ -1,8 +1,8 @@
 import {App} from 'vue'
-import { TestCP } from './components/testCp'
+import { TestCp } from './components/testCp'
 
 const elmPlusComponents = [
-    TestCP,
+    TestCp,
 ]
 
 export const installer = (app: App) => {
