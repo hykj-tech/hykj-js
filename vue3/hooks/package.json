@@ -8,6 +8,7 @@
   },
   "keywords": [],
   "dependencies": {
+    "@hykj-js/shared": "workspace:^"
   },
   "author": "",
   "license": "ISC"

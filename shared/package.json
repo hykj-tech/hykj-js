@@ -8,6 +8,8 @@
   },
   "keywords": [],
   "dependencies": {
+    "lodash-es": "^4.17.21",
+    "qs": "^6.11.2"
   },
   "author": "",
   "license": "ISC"

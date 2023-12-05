@@ -1,5 +1,5 @@
 packages:
-  - vanillajs
+  - shared
   - vue3/packages/*
   - vue3/hooks
   - vue3/play
