@@ -1,2 +1,3 @@
-export * from './commonToggle';
-export * from './commonList'
+export * from './components/commonToggle';
+export * from './components/commonList';
+export * from './components/translate'

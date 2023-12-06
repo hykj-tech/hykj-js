@@ -49,9 +49,9 @@ function definedBaseUrl(config: AxiosRequestConfig) {
   // 配置baseUrl,默认采用后端API做为baseURL
   let baseUrl = BASE_URL;
   // 如果当前环境是浏览器，默认不设置baseURL
-  if (IS_Browser) {
-    baseUrl = '';
-  }
+  // if (IS_Browser) {
+  //   baseUrl = '';
+  // }
   // 如果config.url已经是完整的url，则不需要拼接
   if (config.url?.startsWith('http')) {
     baseUrl = '';
