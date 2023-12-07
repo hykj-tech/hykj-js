@@ -1,4 +1,4 @@
-import {reactive, ref} from "vue";
+import {reactive} from "vue";
 import {useDebounceFn} from "@vueuse/core";
 import {structureClone} from "@hykj-js/shared";
 
@@ -40,7 +40,7 @@ export const useCommonList = <RowType>(
   options: useCommonListOptions<RowType>
 ) => {
   // 当前行数据Key
-  const rowIdKey = ref(options.rowIdKey || 'id');
+  // const rowIdKey = ref(options.rowIdKey || 'id');
   // 列表状态
   const state = reactive({
     // 列表加载
@@ -59,7 +59,7 @@ export const useCommonList = <RowType>(
     total: 0,
   }, options.pagination))
   const fetchFunc = options.fetchFunc;
-  const deleteFunc = options.deleteFunc;
+  // const deleteFunc = options.deleteFunc;
   let loadDataLock: string | number = '';
   const defaultQuery = structureClone(options.query);
 
@@ -67,7 +67,7 @@ export const useCommonList = <RowType>(
    * 更新列表
    * @param options
    */
-  async function loadData(options?: loadDataOptions) {
+  async function loadData(options?: loadDataOptions & Event) {
     let l: RowType[] = [];
     let t = 0;
     loadDataLock = new Date().getTime()?.toString();
@@ -80,12 +80,15 @@ export const useCommonList = <RowType>(
       // 使用固定的this.fetchList方法, 要求返回{list,total} 或者 [list,total]
       if (fetchFunc && fetchFunc instanceof Function) {
         const fetchFuncResult= await fetchFunc() || {};
+        let s
         if(fetchFuncResult instanceof Array && fetchFuncResult.length === 2){
+          s = fetchFuncResult as [RowType[], number];
           l = fetchFuncResult[0] || [];
           t = fetchFuncResult[1] || 0;
         }else{
-          l = fetchFuncResult.list || [];
-          t = fetchFuncResult.total || 0;
+          s = fetchFuncResult as FetchFuncResult<RowType>;
+          l = s.list || [];
+          t = s.total || 0;
         }
       }
     } catch (e) {
@@ -148,7 +151,7 @@ export const useCommonList = <RowType>(
   // 开放一个方法，可以动态修改defaultQuery
   function updateDefaultQuery(query:Object){
     Object.keys(query).forEach(key => {
-      defaultQuery[key] = query[key];
+      defaultQuery[key] = query[key as keyof typeof query];
     })
   }
 
