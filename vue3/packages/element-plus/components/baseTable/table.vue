@@ -107,7 +107,7 @@
   </div>
 </template>
 
-<script  setup>
+<script setup>
 import {
   Refresh,
   Operation

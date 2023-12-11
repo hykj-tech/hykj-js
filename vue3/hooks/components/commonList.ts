@@ -1,6 +1,6 @@
 import {reactive} from "vue";
 import {useDebounceFn} from "@vueuse/core";
-import {structureClone} from "@hykj-js/shared";
+import {structuredClone} from "@hykj-js/shared";
 
 type ListPagination = {
   // 可用于el-pagination的布局参数
@@ -60,7 +60,12 @@ export const useCommonList = <RowType>(
   const fetchFunc = options.fetchFunc;
   // const deleteFunc = options.deleteFunc;
   let loadDataLock: string | number = '';
-  const defaultQuery = structureClone(options.query);
+  let defaultQuery: Record<any, any>
+  if(isReactive(options.query)){
+    defaultQuery = structuredClone(toRaw(options.query));
+  }else{
+    defaultQuery = structuredClone(options.query);
+  }
 
   /**
    * 更新列表

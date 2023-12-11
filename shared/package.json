@@ -13,5 +13,9 @@
     "qs": "^6.11.2"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "@types/qs": "^6.9.10"
+  }
 }

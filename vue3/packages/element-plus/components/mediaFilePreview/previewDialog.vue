@@ -1,6 +1,7 @@
 <template>
   <el-dialog
-    :visible.sync="visible"
+      class="cp-file-preview-dialog"
+    v-model="visible"
     append-to-body
     :title="titleText"
     width="50vw"
@@ -23,6 +24,8 @@
 
 <script setup lang="ts">
 import {computed, onBeforeUnmount, ref, watch} from "vue";
+import {ElEmpty, ElDialog} from 'element-plus';
+import {previewDialogBus} from "@hykj-js/vue3-element-plus/components/mediaFilePreview/event.ts";
 interface Props {
   // 对话框标题
   title?: string,
@@ -42,27 +45,22 @@ const titleText = computed(() => {
 function open(){
   visible.value = true
 }
-const emit = defineEmits({
-  // 关闭事件
-  close: () => true
-})
 watch(()=>visible.value, (newVal)=>{
   if(!newVal){
-    emit('close')
+    previewDialogBus.emit('close')
   }
 })
 onBeforeUnmount(()=>{
-  console.log('beforeDestroy')
   // 置空媒体文件src，销毁播放器，否则系统仍然会将该文件作为待播放状态，电脑触发快捷键播放时还会继续播放
   if(videoPlayer.value){
-    videoPlayer.value.pause()
-    videoPlayer.value.src = ''
-    videoPlayer.value.remove()
+    videoPlayer.value!.pause()
+    videoPlayer.value!.src = ''
+    videoPlayer.value!.remove()
   }
   if(audioPlayer.value){
-    audioPlayer.value.pause()
-    audioPlayer.value.src = ''
-    audioPlayer.value.remove()
+    audioPlayer.value!.pause()
+    audioPlayer.value!.src = ''
+    audioPlayer.value!.remove()
   }
 })
 defineExpose({
@@ -70,17 +68,16 @@ defineExpose({
 })
 </script>
 
-<style scoped lang="scss">
-::v-deep .el-dialog{
+<style lang="scss">
+.cp-file-preview-dialog{
   display: flex;
   flex-direction: column;
   .el-dialog__body{
     flex: 1;
     padding: 20px;
     overflow: hidden;
-    justify-content: center;
-    align-items: center;
     .player{
+      max-height: 70vh;
       width: 100%;
     }
   }

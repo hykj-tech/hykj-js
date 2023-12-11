@@ -32,6 +32,13 @@ importers:
       qs:
         specifier: ^6.11.2
         version: 6.11.2
+    devDependencies:
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
+      '@types/qs':
+        specifier: ^6.9.10
+        version: 6.9.10
 
   vue3/hooks:
     dependencies:
@@ -50,12 +57,25 @@ importers:
       '@hykj-js/vue3-hooks':
         specifier: workspace:^
         version: link:../../hooks
+      '@vue/shared':
+        specifier: ^3.3.11
+        version: 3.3.11
+      byte-size:
+        specifier: ^8.1.1
+        version: 8.1.1
       element-plus:
         specifier: ^2.4.3
         version: 2.4.3(vue@3.3.9)
+      mitt:
+        specifier: ^3.0.1
+        version: 3.0.1
       vue:
         specifier: ^3.3.8
         version: 3.3.9(typescript@5.3.2)
+    devDependencies:
+      '@types/byte-size':
+        specifier: ^8.1.2
+        version: 8.1.2
 
   vue3/play:
     dependencies:
@@ -426,15 +446,21 @@ packages:
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
     dev: false
 
+  /@types/byte-size@8.1.2:
+    resolution: {integrity: sha512-jGyVzYu6avI8yuqQCNTZd65tzI8HZrLjKX9sdMqZrGWVlNChu0rf6p368oVEDCYJe5BMx2Ov04tD1wqtgTwGSA==}
+    dev: true
+
   /@types/lodash-es@4.17.12:
     resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
     dependencies:
       '@types/lodash': 4.14.202
-    dev: false
 
   /@types/lodash@4.14.202:
     resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
-    dev: false
+
+  /@types/qs@6.9.10:
+    resolution: {integrity: sha512-3Gnx08Ns1sEoCrWssEgTSJs/rsT2vhGP+Ja9cnnk9k4ALxinORlQneLXFeFKOTJMOeZUFD1s7w+w2AphTpvzZw==}
+    dev: true
 
   /@types/web-bluetooth@0.0.16:
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==}
@@ -560,6 +586,10 @@ packages:
       '@vue/shared': 3.3.9
       vue: 3.3.9(typescript@5.3.2)
 
+  /@vue/shared@3.3.11:
+    resolution: {integrity: sha512-u2G8ZQ9IhMWTMXaWqZycnK4UthG1fA238CD+DP4Dm4WJi5hdUKKLg0RMRaRpDPNMdkTwIDkp7WtD0Rd9BH9fLw==}
+    dev: false
+
   /@vue/shared@3.3.9:
     resolution: {integrity: sha512-ZE0VTIR0LmYgeyhurPTpy4KzKsuDyQbMSdM49eKkMnT5X4VfFBLysMzjIZhLEFQYjjOVVfbvUDHckwjDFiO2eA==}
 
@@ -601,6 +631,11 @@ packages:
     dependencies:
       balanced-match: 1.0.2
     dev: true
+
+  /byte-size@8.1.1:
+    resolution: {integrity: sha512-tUkzZWK0M/qdoLEqikxBWe4kumyuwjl3HO6zHTr4yEI23EojPtLYXdG1+AQY7MN0cGyNDvEaJ8wiYQm6P2bPxg==}
+    engines: {node: '>=12.17'}
+    dev: false
 
   /call-bind@1.0.5:
     resolution: {integrity: sha512-C3nQxfFZxFRVoJoGKKI8y3MOEo129NQ+FgQ08iye+Mk4zNZZGdjfs06bVTr+DBSlA66Q2VEcMki/cUCP4SercQ==}
@@ -799,6 +834,10 @@ packages:
     dependencies:
       brace-expansion: 2.0.1
     dev: true
+
+  /mitt@3.0.1:
+    resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
+    dev: false
 
   /muggle-string@0.3.1:
     resolution: {integrity: sha512-ckmWDJjphvd/FvZawgygcUeQCxzvohjFO5RxTjj4eq8kw359gFF3E1brjfI+viLMxss5JrHTDRHZvu2/tuy0Qg==}

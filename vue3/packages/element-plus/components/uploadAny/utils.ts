@@ -1,4 +1,4 @@
-import type {UploadAnyFile} from "@/components/uploadAny/type";
+import {UploadAnyFile} from "./type";
 
 export type FileType = 'image' | 'audio' | 'video' | 'document' | 'archive';
 // 常见文件类型
@@ -45,6 +45,7 @@ export function getFileTypeFromFilename(fileName: string) {
 }
 
 import byteSize from 'byte-size';
+import UploadAny from "./uploadAny.vue";
 
 export function getFileSize(size: number) {
   // 如果size不是有效的数字，直接返回空
@@ -108,16 +109,14 @@ export async function getFileSizeByFetch(fileUrl: string){
 
 /**
  * 上传组件校验
- * @param vm vue实例
- * @param uploaderRefNames
+ * @param uploaderList
  */
-export const batchCheckUploader = (vm: any, uploaderRefNames: string[]) => {
+export const batchCheckUploader = (uploaderList: InstanceType<typeof UploadAny>[]) => {
   const result = {
     ok:true,
     message: ''
   }
-  for(const refName of uploaderRefNames || []){
-    const uploader = vm.$refs[refName]
+  for(const uploader of uploaderList || []){
     if(uploader && uploader.isUploading && uploader.isAllFileSuccess){
       // 有文件正在上传中
       if(uploader.isUploading()){
@@ -141,3 +140,4 @@ export const batchCheckUploader = (vm: any, uploaderRefNames: string[]) => {
   }
   return result
 }
+

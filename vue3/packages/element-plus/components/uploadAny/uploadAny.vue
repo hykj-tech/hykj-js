@@ -4,23 +4,31 @@
       <div class="file-item" v-for="(fileItem, index) in state.fileList" :key="getFileUrl(fileItem) + index"
         :data-has-file-item-slot="hasFileItemSlot">
         <div class="delete-btn" @click="deleteFile(index)" v-if="!props.disabled">
-          <i class="icon el-icon-circle-close"></i>
+          <!-- <i class="icon el-icon-circle-close"></i> -->
+          <el-icon class="icon">
+            <CircleCloseFilled></CircleCloseFilled>
+          </el-icon>
         </div>
         <!-- 上传进度显示 -->
-        <div class="mask"
-             v-if="fileItem.raw?.status === 'progress'"
-             v-loading="fileItem.raw?.status === 'progress' && fileItem.raw?.progress === 0"
-        >
-          <el-progress color="#13ce66" text-color="#fff" :width="80" type="circle" :percentage="fileItem.raw?.progress || 0">
+        <div class="mask" v-if="fileItem.raw?.status === 'progress'"
+          v-loading="fileItem.raw?.status === 'progress' && fileItem.raw?.progress === 0">
+          <el-progress color="#13ce66" text-color="#fff" :width="80" type="circle"
+            :percentage="fileItem.raw?.progress || 0">
           </el-progress>
         </div>
         <!-- 上传失败显示 -->
         <div class="mask" v-if="fileItem.raw?.status === 'fail'">
           <div class="fail-info">
-            <i class="el-icon-warning fail-icon"></i>
+<!--            <i class="el-icon-warning fail-icon"></i>-->
+            <el-icon class=" fail-icon">
+              <Warning></Warning>
+            </el-icon>
             <span class="fail-text"> 上传失败 </span>
             <span class="retry" @click="retryFile(fileItem)">
-              <i class="el-icon-refresh"></i>
+<!--              <i class="el-icon-refresh"></i>-->
+              <el-icon class="el-icon-refresh">
+                <Refresh></Refresh>
+              </el-icon>
               重试
             </span>
           </div>
@@ -32,12 +40,14 @@
               :preview-src-list="[getFileUrl(fileItem)]" :src="getFileUrl(fileItem)">
             </el-image>
           </div>
-          <div class="common-item video-item"
-               v-else-if="getFileType(fileItem) === 'video'"
-               @click="previewFile(fileItem)"
-          >
-            <i class="play-icon el-icon-caret-right"
-               v-if="fileItem.raw?.status !== 'progress' && fileItem.raw?.status !== 'fail'"></i>
+          <div class="common-item video-item" v-else-if="getFileType(fileItem) === 'video'"
+            @click="previewFile(fileItem)">
+<!--            <i class="play-icon el-icon-caret-right"-->
+<!--               v-if="fileItem.raw?.status !== 'progress' && fileItem.raw?.status !== 'fail'"-->
+<!--             ></i>-->
+            <el-icon class="play-icon"  v-if="fileItem.raw?.status !== 'progress' && fileItem.raw?.status !== 'fail'">
+              <CaretRight></CaretRight>
+            </el-icon>
             <video style="width: 100%;height: 100%" :src="getFileUrl(fileItem)"></video>
           </div>
           <!-- 其他类型的文件 -->
@@ -52,18 +62,19 @@
               <span v-if="fileItem.fileSize">
                 {{ getFileSize(fileItem.fileSize || 0) }}
               </span>
-              <i class="el-icon-loading"
-                 v-if="fileSizeLoading.data[`${fileItem.url}_${index}`]"
-              ></i>
+              <i class="el-icon-loading" v-if="fileSizeLoading.data[`${fileItem.url}_${index}`]"></i>
             </div>
           </div>
         </slot>
       </div>
       <div class="upload-btn" v-if="props.standalone ? true : showUploadBtn" @click="clickChooseFile"
-           :data-has-list="Boolean(state.fileList.length) && !props.standalone">
+        :data-has-list="Boolean(state.fileList.length) && !props.standalone">
         <slot name="upload-btn">
           <div class="plus-btn">
-            <i class="plus-icon el-icon-plus"></i>
+            <!--            <i class="plus-icon el-icon-plus"></i>-->
+            <el-icon :size="24" class="plus-icon">
+              <Plus></Plus>
+            </el-icon>
           </div>
         </slot>
       </div>
@@ -73,9 +84,11 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, reactive, useSlots, watch} from 'vue';
-import type {UploadAnyFile} from './type';
-import {getFileTypeImage} from './assets';
+import { Plus, CircleCloseFilled, Refresh, Warning,CaretRight } from '@element-plus/icons-vue'
+import { ElIcon } from 'element-plus'
+import { computed, onMounted, reactive, useSlots, watch } from 'vue';
+import type { UploadAnyFile, UploadAnyProps, UploadAnySate } from './type';
+import { getFileTypeImage } from './assets';
 import {
   FileType,
   fileTypes,
@@ -84,48 +97,17 @@ import {
   getFileSizeByFetch,
   getFileTypeFromFilename,
 } from './utils';
-import {Message as ElMessage, MessageBox as ElMessageBox,} from 'element-ui';
+import { ElMessage, ElMessageBox, } from 'element-plus';
 // import {UploadProgress} from '@/utils/fileUploadFragmentation';
-// import request from "@/utils/request";
-import {mediaFilePreview} from "../mediaFilePreview";
-import {AxiosRequestConfig} from "axios";
-import {getToken} from "@/utils/auth";
-// 一些常量
-const commonUploadUrl = '/api/file/Uploader/annexpic'
-const getCommonUploadHeaders = ()=>{
-  return {
-    'Authorization': getToken(),
-  }
-}
+import { mediaFilePreview } from "../mediaFilePreview";
+import { AxiosRequestConfig } from "axios";
+import { FetchData } from "@hykj-js/shared";
+import {
+  BeforeNormalUploadPayload,
+  onBeforeNormalUploadFuncList
+} from "./configUpload";
 
-interface UploadAnySate {
-  uploading: boolean;
-  fileList: UploadAnyFile[];
-}
-interface UploadAnyProps {
-  // 是否允许上传多个
-  multiple?: boolean;
-  // 上传的文件类型（预设类型），可多选(数组)，'image' | 'audio' | 'video' | 'document' | 'archive'
-  fileType?: FileType[] | 'image' | 'audio' | 'video' | 'document' | 'archive';
-  // 单独限制的格式,若fileType和accept都指定，将合并两者的限制,如只要显示上传pdf：:accept="['pdf']"
-  // image: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'],
-  // document: ['doc', 'docx', 'xls', 'xlsx', 'pdf', 'ppt', 'pptx'],
-  accept?: string[];
-  // 上传的文件大小限制
-  sizeLimit?: number;
-  // 上传的文件数量限制
-  limit?: number;
-  // 绑定的文件
-  fileList?: UploadAnyFile[];
-  // 是否采用分片上传, 默认为自动超过5M使用分片上传
-  chunk?: boolean | 'auto';
-  // 是否禁用
-  disabled?: boolean;
-  // 独立模式，不使用文件列表显示，只使用本组件的上传逻辑
-  standalone?: boolean;
-  // 储存桶命名
-  bucketModuleName?: string;
-}
+
 
 // 组件的props
 const props = withDefaults(defineProps<UploadAnyProps>(), {
@@ -163,7 +145,7 @@ watch(
   () => props.fileList,
   v => {
     if (v && v instanceof Array) {
-      state.fileList = v;
+      state.fileList = v as UploadAnyFile[];
     }
   }
 );
@@ -193,8 +175,8 @@ function getAllowedFileExtensionList() {
 // 根据fileType预设类型获取accept数组
 function getAcceptListFromFileType(fileType: FileType | FileType[]) {
   let fileTypeList: string[]
-  if (props.fileType instanceof Array) {
-    fileTypeList = props.fileType.map(i => fileTypes[i]).flat();
+  if (fileType instanceof Array) {
+    fileTypeList = fileType.map(i => fileTypes[i]).flat();
   } else {
     fileTypeList = fileTypes[props.fileType as FileType];
   }
@@ -202,12 +184,12 @@ function getAcceptListFromFileType(fileType: FileType | FileType[]) {
 }
 
 function fileNameShow(file: UploadAnyFile) {
-  if(file.name){
+  if (file.name) {
     return file.name
   }
   // 如果没有，根据url获取
   const url = file.url
-  if(!url){
+  if (!url) {
     return ''
   }
   const urlSplit = url.split('/')
@@ -227,9 +209,9 @@ const showUploadBtn = computed(() => {
   return !props.disabled && state.fileList.length < props.limit;
 });
 
-const bucketModuleName = computed(() => {
-  return props.bucketModuleName || 'business';
-});
+// const bucketModuleName = computed(() => {
+//   return props.bucketModuleName || 'business';
+// });
 
 // 点击文件的删除
 function deleteFile(index: number) {
@@ -251,7 +233,7 @@ function deleteFile(index: number) {
       // 如果文件在上传中，取消上传
       state.fileList.splice(index, 1);
     })
-    .catch(e => {
+    .catch((e: any) => {
       console.log(e);
     });
 }
@@ -384,30 +366,61 @@ async function createUpload(fileList?: UploadAnyFile[]) {
  */
 async function normalUpload(file: UploadAnyFile) {
   file.raw!.progress = 0;
-  const rawFile = file.raw!.file;
+  // const rawFile = file.raw!.file;
   try {
     file.raw!.status = 'progress';
     state.uploading = true;
     const formData = new FormData();
-    formData.append('file', rawFile);
-    formData.append('modules', bucketModuleName.value);
-    const res = await request({
-      url: commonUploadUrl,
+    // 都交给外部自定义上传行为和表单内容
+    // formData.append('file', rawFile);
+    // formData.append('modules', bucketModuleName.value);
+    const onBeforeUploadPayload: BeforeNormalUploadPayload = {
+      // uploadAnyProps是只读的
+      file: file,
+      uploadAnyProps: Object.freeze(JSON.parse(JSON.stringify(props))),
+      formData,
       method: 'post',
-      data: formData,
-      headers: getCommonUploadHeaders(),
+      url: '',
+      additionalHeader: {},
+    }
+    // 调用全局beforeUpload
+    const funcList = onBeforeNormalUploadFuncList
+    for (let i = 0; i < funcList.length; i++) {
+      const func = funcList[i]
+      await func(onBeforeUploadPayload)
+    }
+    // 如果组件自定义了beforeNormalUpload，再运行一次
+    if (props.beforeNormalUpload && typeof props.beforeNormalUpload === 'function') {
+      await props.beforeNormalUpload(onBeforeUploadPayload)
+    }
+    // 调用beforeUpload后，如果url还是空的，那么就使报错
+    if (!onBeforeUploadPayload.url) {
+      throw new Error('[uploadAny] url is empty after onBeforeUpload')
+    }
+    // 组装最后使用的数据
+    const data = onBeforeUploadPayload.formData
+    const url = onBeforeUploadPayload.url
+    const headers = onBeforeUploadPayload.additionalHeader
+    const method = onBeforeUploadPayload.method
+    const [res, e] = await FetchData({
+      url,
+      method,
+      data,
+      headers,
       onUploadProgress: (progressEvent: any) => {
         file.raw!.progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
       },
       signal: file.raw!.abortSignal,
     } as AxiosRequestConfig);
+    if (e) throw e
     file.raw!.status = 'success';
     file.raw!.response = res;
-    file.id = res.data.id
+    updateFileId(file);
     updateFileUrl(file);
     emit('success', file, state.fileList);
   } catch (err) {
     file.raw!.status = 'fail';
+    console.error(err);
     emit('error', file, state.fileList);
   } finally {
     checkUploading();
@@ -454,9 +467,20 @@ function checkUploading() {
     return status === 'progress';
   });
 }
+// 更新文件的id
+function updateFileId(file: UploadAnyFile) {
+  file.id =
+    file.raw?.response?.data?.id ||
+    file.raw?.response?.data?.name ||
+    ''
+}
 // 将raw中的url更新到file.url
 function updateFileUrl(file: UploadAnyFile) {
-  file.url = file.raw?.response?.data?.url || '';
+  file.url =
+    file.raw?.response?.link ||
+    file.raw?.response?.url ||
+    file.raw?.response?.data?.url ||
+    '';
 }
 // 绑定UI上显示的url
 function getFileUrl(file: UploadAnyFile) {
@@ -487,7 +511,7 @@ function isUploading() {
 // 是否文件列表均上传成功（或已经包含url）
 function isAllFileSuccess() {
   return state.fileList.every(file => {
-    if(file.hasOwnProperty('raw')){
+    if (file.hasOwnProperty('raw')) {
       return file.raw!.status === 'success' && file.url;
     }
     return Boolean(file.url);
@@ -510,43 +534,43 @@ function previewFile(file: UploadAnyFile) {
     return;
   }
   mediaFilePreview(url, {
-    title: name? `文件预览-${name}` : '',
+    title: name ? `文件预览-${name}` : '',
     previewType: fileType,
   })
 }
-onMounted(async ()=>{
+onMounted(async () => {
   await ensureFileSizeInfo()
 })
 
 // 自动更新fileSize的loading
 const fileSizeLoading = reactive({
-  data: props.fileList?.reduce((acc, file)=>{
+  data: props.fileList?.reduce((acc, file) => {
     const index = props.fileList?.indexOf(file)
     acc[`${file.url}_${index}`] = false
     return acc
-  }, {} as Record<string, boolean>) || {}
+  }, {} as Record<any,any>) || {}
 })
 
 // 自动检测文件列表中的文件是否都有fileSize，如果没有自动获取
-async function ensureFileSizeInfo(){
-  const taskList = state.fileList.map(async (file, index)=>{
-    if(!file.fileSize){
+async function ensureFileSizeInfo() {
+  const taskList = state.fileList.map(async (file, index) => {
+    if (!file.fileSize) {
       // loading
       fileSizeLoading.data[`${file.url}_${index}`] = true;
-      fileSizeLoading.data  = {...fileSizeLoading.data}
-      file.fileSize = await getFileSizeByFetch(file.url)  || undefined
+      fileSizeLoading.data = { ...fileSizeLoading.data }
+      file.fileSize = await getFileSizeByFetch(file.url) || undefined
       fileSizeLoading.data[`${file.url}_${index}`] = false;
-      fileSizeLoading.data  = {...fileSizeLoading.data}
+      fileSizeLoading.data = { ...fileSizeLoading.data }
     }
   })
   await Promise.allSettled(taskList)
 }
 
 // fileList参数和state中的fileList变化都执行fileSize更新检测
-watch(()=>props.fileList, async ()=>{
+watch(() => props.fileList, async () => {
   await ensureFileSizeInfo()
 })
-watch(()=>state.fileList, async ()=>{
+watch(() => state.fileList, async () => {
   await ensureFileSizeInfo()
 })
 // 供外部使用的函数方法
@@ -566,14 +590,17 @@ defineExpose({
 <style scoped lang="scss">
 .upload-any {
 
-  ::v-deep .el-progress__text{
+  :deep(.el-progress__text){
     color: #fff;
   }
+
   &[data-standalone='false'] {
     padding-top: 10px;
   }
+
   display: flex;
-  align-items: start;
+  align-items: flex-start;
+
   .upload-btn {
     &[data-has-list='true'] {
       margin-left: 15px;
@@ -607,6 +634,7 @@ defineExpose({
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
+
     .file-item {
       &[data-has-file-item-slot='true'] {
         width: auto;
@@ -697,25 +725,28 @@ defineExpose({
       cursor: pointer;
       background: var(--uploadAny-image-item-bg);
     }
-    .video-item{
+
+    .video-item {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      &:hover{
+
+      &:hover {
         .play-icon {
           // 放大效果
           transform: scale(1.2);
         }
       }
-      .play-icon{
-        z-index:2;
+
+      .play-icon {
+        z-index: 2;
         position: absolute;
         font-size: 40px;
         color: #ac3c3c;
         // 给个阴影
         text-shadow: 0 0 10px #000;
-        transition: all  0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
       }
     }
 

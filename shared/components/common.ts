@@ -108,4 +108,9 @@ export function maskString(str: string, options?: {len?: number, start?: number}
 
 import {cloneDeep} from 'lodash-es';
 // structureClone的polyfill,如果globalThis不存在，使用lodash-es的cloneDeep
-export const structureClone = globalThis?.structureClone || cloneDeep;
+export const structuredClone = globalThis?.structuredClone || cloneDeep;
+export const polyfillStructuredClone = () => {
+  if (globalThis && !globalThis.structuredClone){
+    globalThis.structuredClone = cloneDeep;
+  }
+}
