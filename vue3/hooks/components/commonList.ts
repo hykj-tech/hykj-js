@@ -15,29 +15,28 @@ type ListPagination = {
   total?: number
 }
 
-interface FetchFuncResult<RowType = any> {
+type FetchFuncResult<RowType = any> =  {
   list: RowType[],
   total: number
 }
 
-interface useCommonListOptions<RowType = any> {
+export type UseCommonListOptions<RowType = any> = {
   // 初始的查询参数对象，这里不再做过多类型处理，外部需要传输响应式数据，这里只做重置query的记录拦截
   query: any,
   // 更新列表的方法
   fetchFunc?: () => Promise<FetchFuncResult<RowType> | [RowType[], number] >,
-  deleteFunc?: () => Promise<void>,
   // 初始的分页参数定义
   pagination?: ListPagination,
   // 当前行数据Key
   rowIdKey?: string,
 }
 
-interface loadDataOptions {
+type LoadDataOptions = {
   loading?: boolean
 }
 
 export const useCommonList = <RowType>(
-  options: useCommonListOptions<RowType>
+  options: UseCommonListOptions<RowType>
 ) => {
   // 当前行数据Key
   // const rowIdKey = ref(options.rowIdKey || 'id');
@@ -67,7 +66,7 @@ export const useCommonList = <RowType>(
    * 更新列表
    * @param options
    */
-  async function loadData(options?: loadDataOptions & Event) {
+  async function loadData(options?: LoadDataOptions & Event) {
     let l: RowType[] = [];
     let t = 0;
     loadDataLock = new Date().getTime()?.toString();

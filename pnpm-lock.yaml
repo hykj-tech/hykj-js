@@ -47,6 +47,9 @@ importers:
       '@hykj-js/shared':
         specifier: workspace:^
         version: link:../../../shared
+      '@hykj-js/vue3-hooks':
+        specifier: workspace:^
+        version: link:../../hooks
       element-plus:
         specifier: ^2.4.3
         version: 2.4.3(vue@3.3.9)
