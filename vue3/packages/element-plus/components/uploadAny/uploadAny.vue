@@ -234,7 +234,7 @@ function deleteFile(index: number) {
       state.fileList.splice(index, 1);
     })
     .catch((e: any) => {
-      console.log(e);
+      console.error(e);
     });
 }
 

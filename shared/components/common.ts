@@ -114,3 +114,12 @@ export const polyfillStructuredClone = () => {
     globalThis.structuredClone = cloneDeep;
   }
 }
+
+// 安全JSON.parse
+export const safeJSONParse = (str: string) => {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    return null;
+  }
+}

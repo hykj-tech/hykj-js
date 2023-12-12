@@ -31,12 +31,21 @@ export function registerLocalDictDataExtend(dictKey: string, dictData: DictObj[]
 }
 
 
-function stringify(dictKey: string) {
-// 对localDictData中的value进行字符串化
-Object.keys(localDictData).forEach((key) => {
-  const k = key as keyof typeof localDictData;
-  localDictData[k].forEach((item) => {
-    item.value = item.value?.toString();
-  })
- })
+function stringify(dictKey?: string) {
+  // 递归对本地扩展字典中的value进行toString()
+  function stringifyDictData(dictData: DictObj[]) {
+    dictData.forEach(dict => {
+      dict.value = dict.value?.toString();
+      if (dict.children) {
+        stringifyDictData(dict.children);
+      }
+    });
+  }
+  if (dictKey) {
+    stringifyDictData(localDictData[dictKey]);
+  } else {
+    Object.keys(localDictData).forEach(key => {
+      stringifyDictData(localDictData[key]);
+    });
+  }
 }
