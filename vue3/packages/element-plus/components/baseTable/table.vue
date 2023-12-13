@@ -373,6 +373,7 @@ export default {
       this.internalColumns = [...this.internalColumns];
     }
   },
+  expose: ['toggleRowSelection','clearSelection'],
   watch: {
     columns() {
       this.updateInternalColumns();
