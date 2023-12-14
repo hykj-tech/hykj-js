@@ -536,9 +536,9 @@ export default {
     margin-top: 15px;
   }
 }
-:deep(.el-table td div){
-  display: flex;
-}
+// :deep(.el-table td div){
+//   display: flex;
+// }
 </style>
 <style lang="scss">
 .el-tooltip__popper {
