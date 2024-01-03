@@ -62,13 +62,14 @@ export function getFileSize(size: number) {
  */
 export function simplifyUploadAnyFile(file: UploadAnyFile) {
   if(!file) return null;
-  const {name, fileSize, fileExtension, url} = file;
+  const {name, fileSize, fileExtension, url, id} = file;
   return {
     name,
     fileSize,
     fileExtension,
     url,
-    link: url
+    link: url,
+    id
   };
 }
 
