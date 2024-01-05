@@ -127,7 +127,7 @@ class BusinessResHandler {
     if (!this.code) {
       return true;
     }
-    return this.code === 200;
+    return this.code == 200;
   }
   resolve(): [AxiosResponse, HttpRequestError | undefined] {
     let result = [this.response, undefined] as [
@@ -226,7 +226,7 @@ export class HttpRequestError extends Error {
  * 根返回VO
  */
 export interface RootResVO {
-  code: number,
+  code: number | string,
   msg: string | 'Success',
   data: any,
 }
