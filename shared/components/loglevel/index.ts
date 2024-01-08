@@ -3,8 +3,9 @@ const logger = log
 // 初始化日志级别
 export const initLogLevel= ()=>{
   //@ts-ignore
-  window._setLogLevel = setLogLevel
-  window.logger = logger
+  globalThis._setLogLevel = setLogLevel
+  //@ts-ignore
+  globalThis.logger = logger
 }
 
 // 设置日志级别
