@@ -7,3 +7,5 @@ declare global {
    const _setLogLevel: (level: log.LogLevelDesc)=>void
    const logger: log.Logger
 }
+
+export {};
