@@ -21,5 +21,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["index.ts","components/**/*.ts","components/**/*.vue", "utils/**/*.ts", "vue.d.ts"]
+  "include": [
+    "index.ts",
+    "components/**/*.ts",
+    "components/**/*.vue",
+    "utils/**/*.ts",
+    "vue.d.ts",
+    "../../../shared/components/http/global-extend.d.ts"
+  ]
 }

@@ -101,7 +101,6 @@ import { ElMessage, ElMessageBox, } from 'element-plus';
 // import {UploadProgress} from '@/utils/fileUploadFragmentation';
 import { mediaFilePreview } from "../mediaFilePreview";
 import { AxiosRequestConfig } from "axios";
-import { FetchData } from "@hykj-js/shared";
 import {
   BeforeNormalUploadPayload,
   onBeforeNormalUploadFuncList
