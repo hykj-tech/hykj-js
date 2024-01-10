@@ -17,7 +17,7 @@ export const initAMapConfig = (jsAPIKey: string)=>{
 
 export type LoadAmapJSAPIOptions = {
   // key: string; // 申请好的Web端开发者Key，首次调用 load 时必填
-  version: string; // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+  version?: string; // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
   plugins?: string[]; //插件列表
   // 是否加载 AMapUI，缺省不加载
   AMapUI?: {
