@@ -63,7 +63,7 @@ export class HttpUtil {
     // 拦截响应
     this.axiosInstance.interceptors.response.use(
       (response) =>{
-        const handler = new BusinessResHandler(
+        const handler = new ResHandler(
           response,
           {
             statusValidator: this.C.statusValidator,
@@ -126,9 +126,9 @@ export class HttpUtil {
 
 
 /**
- * 业务响应处理
+ * 响应处理
  */
-class BusinessResHandler {
+class ResHandler {
   response: AxiosResponse;
   statusValidator: ((status: number) => boolean) | undefined;
   businessValidator: ((data: any) => boolean ) | undefined;
@@ -171,7 +171,8 @@ class BusinessResHandler {
       AxiosResponse,
         HttpRequestError | undefined
     ];
-    if (!this.validateStatus()) {
+    const config = this.response.config
+    if (!Boolean(config.ignoreStatusValidate) && !this.validateStatus()) {
       const err = new HttpRequestError({
         message: `系统错误(statusCode:${this.status})`,
         config: this.response.config,
@@ -179,7 +180,7 @@ class BusinessResHandler {
       });
       result = [this.response, err];
     }
-    if (!this.validateBusiness()) {
+    if (!Boolean(config.ignoreBusinessValidate) && !this.validateBusiness()) {
       const message =
         this.response.data?.msg || this.response.data?.message || '请求出错';
       const err = new HttpRequestError({
