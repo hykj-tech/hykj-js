@@ -5,6 +5,7 @@ declare global {
     // 供api加载使用
     aMapConfig:{
       key: string,
+      webKey: string
     },
     // 详见： https://lbs.amap.com/api/jsapi-v2/guide/abc/load
     _AMapSecurityConfig: {

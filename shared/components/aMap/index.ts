@@ -1,11 +1,12 @@
 import AMapLoader from '@amap/amap-jsapi-loader';
 import "@amap/amap-jsapi-types";
 
-export const initAMapConfig = (jsAPIKey: string)=>{
+export const initAMapConfig = (jsAPIKey: string ,webKey: string)=>{
   // @ts-ignore
-  // 储存JSAPI的key
+  // 储存JSAPI、WEBAPI的key
   window.aMapConfig = {
     key: jsAPIKey,
+    webKey: webKey,
   }
   // 储存服务地址代理配置
   const protocol = window.location.protocol;
