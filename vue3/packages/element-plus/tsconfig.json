@@ -1,25 +1,14 @@
 {
   "compilerOptions": {
+    "composite": true,
     "outDir": "dist",
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+    "moduleResolution": "node",
     "noEmit": true,
-    "jsx": "preserve",
-
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "index.ts",
@@ -27,6 +16,6 @@
     "components/**/*.vue",
     "utils/**/*.ts",
     "vue.d.ts",
-    "../../../shared/components/http/global-extend.d.ts"
-  ]
+    "../../../shared/**/*.d.ts"
+  ],
 }

@@ -1,0 +1,269 @@
+// 这个模块的内容依赖于Config配置功能，确保使用时已经注入了全局Config
+import {Config} from "../CONFIG";
+
+declare global{
+  const CONFIG: Config
+}
+
+import {uniDownloadFile} from "./file";
+
+
+interface IDownloadFileOptions {
+  fileType?: string,
+  fileName?: string,
+  disableLoading?: boolean
+}
+
+/**
+ * 统一交互的下载文件，
+ * 主要用于区分在h5端，使用a标签下载文件，在其他端直接调用uni的saveFile和open方法
+ * @param url
+ * @param options
+ */
+export const commonDownLoadFile = async (url: string, options?: IDownloadFileOptions) => {
+  const fileUrl = url;
+  if (!fileUrl) {
+    uni.showToast({
+      title: '暂无下载地址',
+      icon: 'none'
+    });
+    return;
+  }
+  if(options?.disableLoading !== false){
+    uni.showLoading({
+      title: '下载中...',
+      mask: true
+    })
+  }
+  // 根据文件url获取文件后缀名
+  const fileType = options?.fileType || fileUrl.substring(fileUrl.lastIndexOf('.') + 1);
+  // 微信端允许的fileType类型
+  const wechatAllowFileType = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf'];
+  // 判断是否是微信端
+  if (CONFIG.platform === 'MP') {
+    // 检测文件类型是否允许
+    if (wechatAllowFileType.indexOf(fileType) === -1) {
+      uni.showToast({
+        title: '文件类型不支持',
+        icon: 'none'
+      });
+      return;
+    }
+  }
+  // 判断h5
+  if (CONFIG.isBrowser) {
+    try {
+      await downloadFileInH5(fileUrl, options);
+      uni.hideLoading()
+    } catch (e) {
+      uni.showToast({
+        title: '下载失败',
+        icon: 'none'
+      });
+    }
+    return;
+  }
+  // 其他端通用模式下载
+  const [res, err] = await uniDownloadFile(fileUrl);
+  if (err) {
+    uni.showToast({
+      title: '下载失败',
+      icon: 'none'
+    });
+    return;
+  }
+  let savedFilePath = ''
+  try {
+    savedFilePath = await wxSaveFileToDisk(res.tempFilePath, options)
+    if(!savedFilePath){
+      savedFilePath = await normalSaveFileToDist(res.tempFilePath)
+    }
+    if(!savedFilePath){
+      uni.showToast({
+        title: '保存文件失败',
+        icon: "error"
+      })
+      return;
+    }
+    // 如果是图片，用uni.previewImage打开
+    const imgTypeList = ['png', 'jpg', 'jpeg', 'gif', 'bmp'];
+    if (imgTypeList.indexOf(fileType?.toLowerCase()) > -1) {
+      uni.previewImage({
+        urls: [savedFilePath],
+      });
+      uni.hideLoading()
+      return;
+    }
+    // 打开文件
+    uni.openDocument({
+      filePath: savedFilePath,
+      // fileType,
+      // @ts-ignore
+      showMenu: true,
+      success: function (res) {
+        uni.hideLoading()
+      },
+      fail: function (err) {
+        // console.error('[commonDownLoadFile] 打开文档失败', err);
+        uni.showToast({
+          title: `当前设备不支持打开该文件，已保存至${savedFilePath}`,
+          icon: 'none',
+          duration: 4000
+        });
+      }
+    });
+  } catch (e) {
+    console.log(e.message)
+    console.error('[commonDownLoadFile] 下载文件失败', e);
+    uni.hideLoading()
+  }
+}
+
+/**
+ * 在h5上使用xhr和a标签下载文件
+ * @param fileUrl
+ * @param options
+ */
+export const downloadFileInH5 = async (fileUrl: string, options?: IDownloadFileOptions) => {
+  return new Promise((resolve, reject) => {
+    const fileName = options?.fileName || fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
+    const fileExtension = options?.fileType || fileName.substring(fileName.lastIndexOf('.') + 1);
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', fileUrl, true);
+    xhr.responseType = 'blob';
+    xhr.onload = function () {
+      if (this.status === 200) {
+        const blob = this.response;
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onload = function (e) {
+          // 转换完成，创建一个a标签用于下载
+          const a = document.createElement('a');
+          // 确保文件名有后缀
+          a.download = fileName.indexOf('.') > -1 ? fileName : `${fileName}.${fileExtension}`;
+          a.href = (e.target as any).result as string;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          resolve(null);
+        };
+        reader.onerror = function (err) {
+          console.error('[downloadFileInH5] 下载文件失败', err);
+          reject(err);
+        }
+      } else {
+        console.error('[downloadFileInH5] 下载文件失败', this.status);
+        reject(`下载文件失败,code:${this.status}`);
+      }
+    };
+    xhr.onerror = function (err) {
+      console.error('[downloadFileInH5] 下载文件失败', err);
+      reject(err);
+    }
+    xhr.send();
+  })
+}
+
+
+// 使用通用的保存，比如app上，目前会是没有文件名的
+export const normalSaveFileToDist = async (tempFilePath: string): Promise<string> =>{
+  return new Promise((ok, rej)=>{
+    uni.saveFile({
+      tempFilePath,
+      success: function (res) {
+        ok(res.savedFilePath)
+      },
+      fail: function (err) {
+        rej(err)
+      }
+    })
+  })
+}
+
+// 使用微信fileManager实现保存，这样会有文件名
+export const wxSaveFileToDisk = async (tempFilePath: string, options?: IDownloadFileOptions) => {
+  // @ts-ignore
+  if (!wx) {
+    // console.log('not in wx env')
+    return '';
+  }
+  // @ts-ignore
+  const rootPath = (wx as any)?.env?.USER_DATA_PATH;
+  if(!rootPath){
+    return ''
+  }
+  const downLoadPath = 'download'
+  const distPath = `${rootPath}/${downLoadPath}`
+  // 校验文件夹是否存在
+  try {
+    await access(distPath)
+  } catch (e: any) {
+    if (e.errMsg?.includes('no such file or directory')) {
+      // 创建文件夹
+      await mkdir(distPath)
+    } else {
+      throw e
+    }
+  }
+  // 保存文件
+  const fileName = options?.fileName || tempFilePath.substring(tempFilePath.lastIndexOf('/') + 1);
+  const fileExtension = options?.fileType || fileName.substring(fileName.lastIndexOf('.') + 1);
+  const fileNameToUse = fileName.indexOf('.') > -1 ? fileName : `${fileName}.${fileExtension}`;
+  const savePath = `${distPath}/${fileNameToUse}`
+  try {
+    return await saveFile(tempFilePath, savePath);
+  } catch (e) {
+    console.error('[wxSaveFileToDisk] 保存文件失败', e);
+    throw e;
+  }
+}
+
+function saveFile(tempFilePath: string, filePath: string): Promise<string> {
+  return new Promise(function (resolve, reject) {
+    const fm = uni.getFileSystemManager();
+    fm.saveFile({
+      tempFilePath,
+      filePath,
+      success: function (res: any) {
+        // res.savedFilePath为已经保存好的文件路径
+        resolve(res.savedFilePath || '');
+      },
+      fail: function (err: any) {
+        reject(err);
+      }
+    });
+  });
+}
+
+function access(path: string): Promise<void> {
+  return new Promise(function (resolve, reject) {
+    const fm = uni.getFileSystemManager();
+    // https://developers.weixin.qq.com/miniprogram/dev/api/file/FileSystemManager.access.html
+    fm.access({
+      path,
+      success: function () {
+        resolve();
+      },
+      fail: function (err: any) {
+        reject(err);
+      }
+    });
+  });
+}
+
+function mkdir(path: string): Promise<void> {
+  return new Promise(function (resolve, reject) {
+    let fm = uni.getFileSystemManager();
+    // https://developers.weixin.qq.com/miniprogram/dev/api/file/FileSystemManager.mkdir.html
+    fm.mkdir({
+      dirPath: path,
+      recursive: true,
+      success: function () {
+        resolve();
+      },
+      fail: function (err: any) {
+        reject(err);
+      }
+    });
+  });
+}

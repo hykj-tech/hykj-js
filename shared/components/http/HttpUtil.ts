@@ -2,21 +2,22 @@
 import Axios, {
   InternalAxiosRequestConfig,
   AxiosResponse,
-  AxiosRequestConfig,
   AxiosInstance
 } from 'axios'
 
+type BASEURL = string | (() => string)
 export type HttpUtilConfig = {
   requestTimeout?: number;
-  BASE_URL?: string;
+  BASE_URL?: BASEURL;
   statusValidator?: (status: number) => boolean;
   businessValidator?: (data: any) => boolean;
+  adapter?: (config: AxiosRequestConfigExtend) => Promise<any>
 }
 
 /**
  * 请求前置函数定义
  */
-type BeforeFetchDataCallback = (config: AxiosRequestConfig) => void | Promise<void>;
+type BeforeFetchDataCallback = (config: AxiosRequestConfigExtend) => void | Promise<void>;
 
 /**
  * 请求后置函数定义
@@ -45,7 +46,8 @@ export class HttpUtil {
     }, config || {})
     this.axiosInstance = Axios.create({
       validateStatus: null,
-      timeout: this.C.requestTimeout
+      timeout: this.C.requestTimeout,
+      adapter: this.C.adapter || undefined
     })
     // 拦截请求
     this.axiosInstance.interceptors.request.use(
@@ -55,6 +57,9 @@ export class HttpUtil {
         return config;
       },
       (error) =>{
+        if(!error.config){
+          log('请求流程内部错误:', error)
+        }
         log(`请求发起中断:  ${error.message}, url: ${error.config.url} `);
         const err = new HttpRequestError(error);
         return Promise.reject(err);
@@ -77,6 +82,9 @@ export class HttpUtil {
         return res;
       },
       (error) =>{
+        if(!error.config){
+          log('请求流程内部错误:', error)
+        }
         log(`请求响应中断：${error.message}, url: ${error.config.url}`);
         const err = new HttpRequestError(error);
         return Promise.reject(err);
@@ -84,8 +92,13 @@ export class HttpUtil {
     )
   }
 
-  private definedBaseUrl(config: AxiosRequestConfig) {
-    let baseUrl = this.C.BASE_URL
+  private definedBaseUrl(config: AxiosRequestConfigExtend) {
+    let baseUrl = ''
+    if(typeof this.C.BASE_URL === 'function'){
+      baseUrl = this.C.BASE_URL()
+    }else{
+      baseUrl = this.C.BASE_URL || ''
+    } 
     if (config.url?.startsWith('http')) {
       baseUrl = ''
     }
@@ -100,7 +113,7 @@ export class HttpUtil {
   }
   // 全局主请求方法
   public async FetchData<DataType = any>(
-    requestOptions: AxiosRequestConfig
+    requestOptions: AxiosRequestConfigExtend
   ):Promise<[DataType | null, HttpRequestError | null]>{
     try {
       if (this.beforeFetchDataCallbackList.length) {
@@ -108,9 +121,13 @@ export class HttpUtil {
           await callback(requestOptions);
         }
       }
-      const res = await this.axiosInstance(requestOptions);
+      const res = await this.axiosInstance({
+        ...requestOptions,
+        // 默认请求/
+        url:requestOptions.url || '/'
+      });
       const data = res.data as DataType;
-      return [data, null] as const;
+      return [data, null];
     } catch (err) {
       const error = err as HttpRequestError;
       if (this.onFetchDataErrorCallbackList.length) {
@@ -119,7 +136,7 @@ export class HttpUtil {
         }
       }
       const res = error.response;
-      return [res?.data || null, error] as const;
+      return [res?.data || null, error];
     }
   }
 }
@@ -148,6 +165,7 @@ class ResHandler {
   }
   // 校验http的响应状态码
   validateStatus() {
+    // 默认校验状态码为200-300之间
     let result = this.status >= 200 && this.status < 300;
     if (this.statusValidator) {
       result = Boolean(this.statusValidator(this.status));
@@ -155,11 +173,9 @@ class ResHandler {
     return result;
   }
 
-  // 校验返回的数据中的业务内容。默认校验code字段为200
+  // 校验返回的数据中的业务内容。默认不对业务数据做处理
   validateBusiness() {
-    console.log(this.response)
-    const code = this.response.data?.code;
-    let result = code?.toString() === '200' ;
+    let result = true
     if (this.businessValidator) {
       result = Boolean(this.businessValidator(this.response.data));
     }
@@ -171,10 +187,10 @@ class ResHandler {
       AxiosResponse,
         HttpRequestError | undefined
     ];
-    const config = this.response.config
+    const config = this.response.config as AxiosRequestConfigExtend;
     if (!Boolean(config.ignoreStatusValidate) && !this.validateStatus()) {
       const err = new HttpRequestError({
-        message: `系统错误(statusCode:${this.status})`,
+        message: `系统错误(${this.status})`,
         config: this.response.config,
         response: this.response,
       });
@@ -207,7 +223,7 @@ export class HttpRequestError extends Error {
    */
   type: 'request' | 'response' | 'business';
   requestUrl: string;
-  #config: InternalAxiosRequestConfig;
+  #config: InternalAxiosRequestConfig & AxiosRequestConfigExtend;
   #response: AxiosResponse | undefined;
   #request: any | undefined;
   constructor(error: any) {
@@ -235,7 +251,7 @@ export class HttpRequestError extends Error {
       urlFromConfig +
       (paramsStringFromConfig ? `?${paramsStringFromConfig}` : '');
   }
-  get config(): InternalAxiosRequestConfig {
+  get config(): InternalAxiosRequestConfig & AxiosRequestConfigExtend{
     return this.#config;
   }
   get response(): AxiosResponse | undefined {
