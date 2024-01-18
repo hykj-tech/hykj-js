@@ -31,6 +31,7 @@
         @select-all="selectAll"
         @row-click="rowClick"
         v-bind="tableOptionsToUse"
+        :highlight-current-row="hightCurrentRow"
         height="100%"
     >
       <!-- 行选中功能 -->
@@ -359,6 +360,10 @@ export default {
     clearSelection() {
       this.$refs.table.clearSelection();
     },
+    // setCurrentRow暴露(设置高亮)
+    setCurrentRow(row) {
+      this.$refs.table.setCurrentRow(row)
+    },
     clickRefresh() {
       this.$emit('refresh');
     },
@@ -373,13 +378,18 @@ export default {
       this.internalColumns = [...this.internalColumns];
     }
   },
-  expose: ['toggleRowSelection','clearSelection'],
+  expose: ['toggleRowSelection','clearSelection','setCurrentRow'],
   watch: {
     columns() {
       this.updateInternalColumns();
     },
   },
   props: {
+    // 表格是否实现高亮
+    hightCurrentRow: {
+      type: Boolean,
+      default: false
+    },
     // 使用表格自带的功能按钮
     useTableTool: {
       type: Boolean,
