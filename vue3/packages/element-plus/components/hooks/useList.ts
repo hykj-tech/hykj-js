@@ -18,7 +18,7 @@ const defaultRowTitleKey = 'name'
  */
 export function useList<RowType>(options: UseListOptions<RowType>){
   const { deleteFunc } = options
-  const useCommonListApi = useCommonList(options)
+  const useCommonListApi = useCommonList<RowType>(options)
 
   // 删除行方法，直接提供loadingConfirm
   const deleteRow = async (row: Record<string, any>)=>{
@@ -50,7 +50,15 @@ export function useList<RowType>(options: UseListOptions<RowType>){
       }).catch(() => {})
   }
   return {
-    ...useCommonListApi,
     deleteRow,
+    state: useCommonListApi.state,
+    pagination: useCommonListApi.pagination,
+    loadData: useCommonListApi.loadData,
+    changeQuery:  useCommonListApi.changeQuery,
+    resetQuery: useCommonListApi.resetQuery,
+    resetPage: useCommonListApi.resetPage,
+    resetPaginationAndLoad: useCommonListApi.resetPaginationAndLoad,
+    setRowNow: useCommonListApi.setRowNow,
+    updateDefaultQuery: useCommonListApi.updateDefaultQuery, 
   }
 }

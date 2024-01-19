@@ -1,4 +1,4 @@
-import {UploadAnyFile, UploadAnyProps} from "./type.ts";
+import {UploadAnyFile, UploadAnyProps} from "./type";
 
 export type BeforeNormalUploadPayload = {
   file:UploadAnyFile;

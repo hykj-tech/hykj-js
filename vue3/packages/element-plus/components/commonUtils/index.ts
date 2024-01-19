@@ -60,7 +60,7 @@ export const loadingConfirm = (options : LoadingConfirmOptions, asyncFn:LoadingC
 }
 
 import {ElMessage} from 'element-plus';
-import type {HttpRequestError} from '@hykj-ks/shared'
+import type {HttpRequestError} from '@hykj-js/shared'
 /**
  * 前端统一提示请求错误方法；
  * @param error
