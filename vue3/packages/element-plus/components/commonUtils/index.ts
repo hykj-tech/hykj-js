@@ -67,14 +67,14 @@ import type {HttpRequestError} from '@hykj-ks/shared'
  */
 export function requestErrorMessage(error: HttpRequestError) {
   let messageShow = '请求失败，请检查网络或服';
-  console.log(error);
+  console.error(error);
   if (error.isAbort) {
     messageShow = '';
   }
   if (error.isTimeout) {
     messageShow = '请求超时';
   }
-  if (error.isBusiness) {
+  if (error.isAfterSuccess) {
     messageShow = error.message
   }
   if (!messageShow) return;
