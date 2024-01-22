@@ -18,7 +18,7 @@ const defaultRowTitleKey = 'name'
  */
 export function useList<RowType>(options: UseListOptions<RowType>){
   const { deleteFunc } = options
-  const useCommonListApi = useCommonList(options)
+  const useCommonListApi = useCommonList<RowType>(options)
 
   // 删除行方法，直接提供loadingConfirm
   const deleteRow = async (row: Record<string, any>)=>{

@@ -11,35 +11,45 @@ type ListPagination = {
   current?: number,
   // 当前页大小
   size: number,
-  // 列表总数
+  // 列表总
   total?: number
 }
 
-type FetchFuncResult<RowType = any> =  {
+export type FetchFuncResult<RowType = any> =  {
   list: RowType[],
-  total: number
+  total: number,
+  // 显式返回的错误
+  err?: any
 }
 
+export type FetchFuncResultTuple<RowType = any> =  [RowType[], number] | [RowType[], number, any]
+
+// 主API的配置
 export type UseCommonListOptions<RowType = any> = {
   // 初始的查询参数对象，这里不再做过多类型处理，外部需要传输响应式数据，这里只做重置query的记录拦截
   query: any,
   // 更新列表的方法
-  fetchFunc?: () => Promise<FetchFuncResult<RowType> | [RowType[], number] >,
+  fetchFunc?: () => Promise<FetchFuncResult<RowType> | FetchFuncResultTuple<RowType> >,
   // 初始的分页参数定义
   pagination?: ListPagination,
-  // 当前行数据Key
+  // 当前行数据Key,默认为id
   rowIdKey?: string,
+  // 使用concat模式，实现瀑布流加载
+  useConcat?: boolean,
 }
 
 type LoadDataOptions = {
-  loading?: boolean
+  loading?: boolean,
+  resetConcat?: boolean,
 }
 
 export const useCommonList = <RowType>(
   options: UseCommonListOptions<RowType>
 ) => {
   // 当前行数据Key
-  // const rowIdKey = ref(options.rowIdKey || 'id');
+  const rowIdKey = ref(options.rowIdKey || 'id');
+  // 是否使用瀑布流模式
+  const useConcat = ref(options.useConcat || false);
   // 列表状态
   const state = reactive({
     // 列表加载
@@ -49,7 +59,7 @@ export const useCommonList = <RowType>(
     // 当前数据行
     rowNow: null as RowType | null | undefined,
   })
-  // 分页参数
+  // 分页数据储存
   const pagination = reactive(Object.assign({
     layout: 'total, sizes, prev, pager, next, jumper',
     sizes: [10, 25, 50, 100],
@@ -58,7 +68,6 @@ export const useCommonList = <RowType>(
     total: 0,
   }, options.pagination))
   const fetchFunc = options.fetchFunc;
-  // const deleteFunc = options.deleteFunc;
   let loadDataLock: string | number = '';
   let defaultQuery: Record<any, any>
   if(isReactive(options.query)){
@@ -67,13 +76,20 @@ export const useCommonList = <RowType>(
     defaultQuery = structuredClone(options.query);
   }
 
+
+  // 当前分页最大页数
+  const maxPage = computed(()=>Math.ceil(pagination.total / pagination.size));
+  // 是否还有下一页
+  const hasNextPage = computed(()=>pagination.current < maxPage.value);
+
   /**
    * 更新列表
    * @param options
    */
-  async function loadData(options?: LoadDataOptions & Event) {
+  async function loadData(options?: LoadDataOptions & Partial<Event>) {
     let l: RowType[] = [];
     let t = 0;
+    let hasErr = false;
     loadDataLock = new Date().getTime()?.toString();
     const lockNow = loadDataLock;
     const loadDataOptions = options || {loading: true}
@@ -85,26 +101,74 @@ export const useCommonList = <RowType>(
       if (fetchFunc && fetchFunc instanceof Function) {
         const fetchFuncResult= await fetchFunc() || {};
         let s
-        if(fetchFuncResult instanceof Array && fetchFuncResult.length === 2){
-          s = fetchFuncResult as [RowType[], number];
+        let e 
+        if(fetchFuncResult instanceof Array && fetchFuncResult.length >= 2){
+          s = fetchFuncResult as FetchFuncResultTuple<RowType>;
           l = fetchFuncResult[0] || [];
           t = fetchFuncResult[1] || 0;
+          e = fetchFuncResult[2] || null;
         }else{
           s = fetchFuncResult as FetchFuncResult<RowType>;
           l = s.list || [];
           t = s.total || 0;
+          e = s.err || null;
         }
+        if(e) hasErr = true
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      hasErr = true;
     } finally {
       if (lockNow === loadDataLock) {
-        state.list = l as any;
-        pagination.total = t;
+        // 只有无错误时才进行状态更新
+        if(!hasErr){
+          pagination.total = t;
+          // 如果当前时瀑布流模式 使用concat, 并需要根据rowIdKey进行去重复
+          // 注意，瀑布流模式下，若出现重复数据，说明后端数据已经存在变更，但客户端无法检测到前页的新增和删除情况
+          // 此时只保证数据不重复，会存在分页无法实时更新问题，需要手动刷新
+          if(useConcat.value){
+            const newList = l.filter((item: any) => {
+              const id = item[rowIdKey.value];
+              return !state.list.some((item2: any) => item2[rowIdKey.value] === id);
+            })
+            if(options?.resetConcat){
+              state.list = l as any
+            }else{
+              state.list = state.list.concat(newList as any[]);
+            }
+          }else{
+            state.list = l as any;
+          }
+          checkPageFallback();
+        }
         state.loading = false;
       }
     }
   }
+  
+  // 检测一次loadData的结果拿到后，是否存在本页已经被完全删除，需要退回上一页情况
+  function checkPageFallback(){
+    // 如果当前是第一页，那么忽略
+    if(pagination.current === 1){
+      return;
+    }
+    // 如果当前页已经超过maxPage，那么退回上一页
+    if(pagination.current > maxPage.value){
+      pagination.current = maxPage.value;
+      if(!useConcat.value){
+        // 单页模式下自动刷新上一页数据
+        loadData();
+      }
+    }
+  }
+
+  function loadNextPage(){
+    if(hasNextPage.value){
+      pagination.current++;
+      loadData();
+    }
+  }
+
 
   /**
    * 重置分页，这个函数不对外开放
@@ -130,14 +194,14 @@ export const useCommonList = <RowType>(
       const debounceTime = Number(options?.debounce) || 500;
       const debounceFn = useDebounceFn(async () => {
           resetPagination();
-          await loadData();
+          await loadData({resetConcat: true});
         },
         debounceTime)
       await debounceFn();
       return;
     }
     resetPagination();
-    await loadData();
+    await loadData({resetConcat: true});
   }
 
   // 重置搜索条件
@@ -163,13 +227,13 @@ export const useCommonList = <RowType>(
   async function resetPage() {
     state.list = [];
     resetQuery();
-    await loadData();
+    await loadData({resetConcat: true});
   }
 
   // 重置分页并加载
   async function resetPaginationAndLoad() {
     resetPagination();
-    await loadData();
+    await loadData({resetConcat: true});
   }
 
   // 更新当前数据行
@@ -181,7 +245,9 @@ export const useCommonList = <RowType>(
   return {
     state,
     pagination,
+    hasNextPage,
     loadData,
+    loadNextPage,
     changeQuery,
     resetQuery,
     resetPage,
