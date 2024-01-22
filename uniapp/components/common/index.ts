@@ -6,14 +6,14 @@ export * from './uniSafeToast'
  */
 export function requestErrorMessage(error: HttpRequestError) {
   let messageShow = '请求失败，请检查网络或服';
-  console.error(error);
+  // console.log(error);
   if (error.isAbort) {
     messageShow = '';
   }
   if (error.isTimeout) {
     messageShow = '请求超时';
   }
-  if (error.isAfterSuccess) {
+  if (error.isBusiness) {
     messageShow = error.message;
   }
   if (!messageShow) return;
