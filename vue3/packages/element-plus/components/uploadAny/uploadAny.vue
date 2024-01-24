@@ -36,7 +36,7 @@
         <slot name="file-item" :item="fileItem">
           <!-- 图片文件 -->
           <div class="image-item" v-if="getFileType(fileItem) === 'image'">
-            <el-image style="width: 100%; height: 100%" fit="contain" hide-on-click-modal
+            <el-image style="width: 100%; height: 100%" fit="contain" hide-on-click-modal preview-teleported
               :preview-src-list="[getFileUrl(fileItem)]" :src="getFileUrl(fileItem)">
             </el-image>
           </div>
