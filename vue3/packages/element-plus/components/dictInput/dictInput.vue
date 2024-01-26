@@ -3,6 +3,7 @@
     <!--    常用选择-->
     <template v-if="inputTypeToUse === 'select'">
       <el-select
+          :teleported="useTeleported"
           style="width: 100%"
           v-model="_value"
           @change="change"
@@ -36,6 +37,7 @@
     <!--    树形字典选择-->
     <template v-if="inputTypeToUse === 'tree'">
       <el-tree-select
+          :teleported="useTeleported"
           :check-strictly="treeOptionsToUse.checkStrictly"
           :collapse-tags='treeOptionsToUse.collapseTags'
           :placeholder="treeOptionsToUse.placeholder"
@@ -47,7 +49,7 @@
           value: valueKey,
           label: labelKey,
           disabled: treeOptionsToUse.treeNodeDisabled,
-         }"
+          }"
           :size="treeOptionsToUse.size"
           :loading="loading && !disableLoading"
           :clearable="treeOptionsToUse.clearable"
@@ -70,6 +72,7 @@ import {safeJSONParse} from "@hykj-js/shared";
 import {ElSelect, ElOption, ElRadio, ElTreeSelect} from "element-plus";
 
 type Props = {
+  teleported?: boolean,
   customDictData?: DictObj[],
   dictKey: string,
   inputType?: string,
@@ -117,7 +120,15 @@ const props = withDefaults(defineProps<Props>(), {
   filterable: false,
   disableLoading: false,
   cacheData: [],
+  teleported: false,
 })
+
+// 是否使用el-select的teleported
+
+const useTeleported = computed(() => {
+  return props.teleported
+})
+
 const internalState = reactive({
   value: props.modelValue,
   loadingTimeout: false
