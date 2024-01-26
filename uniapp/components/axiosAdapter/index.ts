@@ -1,4 +1,5 @@
 import {AxiosHeaders, AxiosProgressEvent} from 'axios';
+import qs from 'qs'
 
 const getResponse = (
   res: any,
@@ -34,12 +35,22 @@ export const uniappAxiosAdapter = (config: AxiosRequestConfigExtend) => {
       header: headerToUse,
     } as any;
 
-    if (data || params) {
+    if (data) {
       try {
-        uniRequestConfig.data = JSON.parse(data || params);
+        uniRequestConfig.data = JSON.parse(data);
       } catch (e) {
-        uniRequestConfig.data = data || params;
+        uniRequestConfig.data = data;
       }
+    }
+    // 兼容axios在xhr下使用params是直接拼接在url后面的
+    if (params) {
+      const queryString = qs.stringify(params);
+      // 如果url已经有参数了，就拼接在后面
+      if (uniRequestConfig.url.indexOf('?') > -1) {
+        uniRequestConfig.url += `&${queryString}`;
+      } else {
+        uniRequestConfig.url += `?${queryString}`;
+      } 
     }
     let uniRequestTask:
       | UniApp.RequestTask

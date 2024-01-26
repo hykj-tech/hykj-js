@@ -60,10 +60,16 @@ importers:
       axios:
         specifier: ^1.6.5
         version: 1.6.5
+      qs:
+        specifier: ^6.11.2
+        version: 6.11.2
     devDependencies:
       '@dcloudio/types':
         specifier: ^3.4.7
         version: 3.4.7
+      '@types/qs':
+        specifier: ^6.9.10
+        version: 6.9.10
 
   vue3/hooks:
     dependencies:

@@ -11,9 +11,11 @@
   "license": "ISC",
   "dependencies": {
     "@hykj-js/shared": "workspace:^",
-    "axios": "^1.6.5"
+    "axios": "^1.6.5",
+    "qs": "^6.11.2"
   },
   "devDependencies": {
-    "@dcloudio/types": "^3.4.7"
+    "@dcloudio/types": "^3.4.7",
+    "@types/qs": "^6.9.10"
   }
 }

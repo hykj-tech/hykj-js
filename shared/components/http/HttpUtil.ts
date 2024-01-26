@@ -124,7 +124,7 @@ export class HttpUtil {
       const res = await this.axiosInstance({
         ...requestOptions,
         // 默认请求/
-        url:requestOptions.url || '/'
+        url:requestOptions.url || '/',
       });
       const data = res.data as DataType;
       return [data, null];
