@@ -9,8 +9,12 @@ type BASEURL = string | (() => string)
 export type HttpUtilConfig = {
   requestTimeout?: number;
   BASE_URL?: BASEURL;
+  // http状态码校验定义
   statusValidator?: (status: number) => boolean;
+  // 业务内容校验定义
   businessValidator?: (data: any) => boolean;
+  // 业务错误的message字段
+  businessErrorMessageFields?: string[];
   adapter?: (config: AxiosRequestConfigExtend) => Promise<any>
 }
 
@@ -72,7 +76,8 @@ export class HttpUtil {
           response,
           {
             statusValidator: this.C.statusValidator,
-            businessValidator: this.C.businessValidator
+            businessValidator: this.C.businessValidator,
+            businessErrorMessageFields: this.C.businessErrorMessageFields
           }
         );
         const [res, err] = handler.resolve();
@@ -124,7 +129,7 @@ export class HttpUtil {
       const res = await this.axiosInstance({
         ...requestOptions,
         // 默认请求/
-        url:requestOptions.url || '/',
+        url:requestOptions.url || '/'
       });
       const data = res.data as DataType;
       return [data, null];
@@ -149,16 +154,20 @@ class ResHandler {
   response: AxiosResponse;
   statusValidator: ((status: number) => boolean) | undefined;
   businessValidator: ((data: any) => boolean ) | undefined;
+  businessErrorMessageFields: string[] 
   constructor(
     response: AxiosResponse,
     options?: {
       statusValidator?: (status: number) => boolean,
-      businessValidator?: (data:any) => boolean
+      businessValidator?: (data:any) => boolean,
+      businessErrorMessageFields?: string[]
     }
   ) {
     this.response = response;
     this.statusValidator = options?.statusValidator;
     this.businessValidator = options?.businessValidator;
+    this.businessErrorMessageFields = options?.businessErrorMessageFields 
+    || ['msg', 'errmsg', 'message']
   }
   get status() {
     return this.response.status;
@@ -197,10 +206,15 @@ class ResHandler {
       result = [this.response, err];
     }
     if (!Boolean(config.ignoreBusinessValidate) && !this.validateBusiness()) {
-      const message =
-        this.response.data?.msg || this.response.data?.message || '请求出错';
+      let message = '请求出错'
+      for(const field of this.businessErrorMessageFields){
+        const messageGet = this.response.data[field]
+        if(messageGet){
+          message = messageGet
+          break
+        }
+      }
       const err = new HttpRequestError({
-        // message: `${message}(code:${this.code})`,
         message: `${message}`,
         config: this.response.config,
         response: this.response,
@@ -219,9 +233,9 @@ export class HttpRequestError extends Error {
    * 错误发生阶段，描述错误是在什么阶段发生的，
    * request: 请求发起阶段，比如网络异常，浏览器阻止等
    * response: 请求响应阶段，比如超时、用户中断，服务器无响应，或服务器直接断开链接无数据等
-   * business: 自定义的业务错误
+   * afterSuccess: 自定义的业务错误，比如http状态码错误，或者其他业务错误
    */
-  type: 'request' | 'response' | 'business';
+  type: 'request' | 'response' | 'afterSuccess';
   requestUrl: string;
   #config: InternalAxiosRequestConfig & AxiosRequestConfigExtend;
   #response: AxiosResponse | undefined;
@@ -231,7 +245,7 @@ export class HttpRequestError extends Error {
     this.#config = error.config;
     if (error.response) {
       // The request was made and the server responded with a status code
-      this.type = 'business';
+      this.type = 'afterSuccess';
       this.#response = error.response;
     } else if (error.request) {
       // The request was made but no response was received
@@ -264,8 +278,8 @@ export class HttpRequestError extends Error {
    * 判断错误是否是业务阶段的错误
    * @returns
    */
-  get isBusiness() {
-    return this.type === 'business';
+  get isAfterSuccess() {
+    return this.type === 'afterSuccess';
   }
   get isAbort() {
     const keywords = ['abort', 'cancel'];

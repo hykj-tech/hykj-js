@@ -60,21 +60,21 @@ export const loadingConfirm = (options : LoadingConfirmOptions, asyncFn:LoadingC
 }
 
 import {ElMessage} from 'element-plus';
-import type {HttpRequestError} from '@hykj-ks/shared'
+import type {HttpRequestError} from '@hykj-js/shared'
 /**
  * 前端统一提示请求错误方法；
  * @param error
  */
 export function requestErrorMessage(error: HttpRequestError) {
   let messageShow = '请求失败，请检查网络或服';
-  console.log(error);
+  // console.error(error);
   if (error.isAbort) {
     messageShow = '';
   }
   if (error.isTimeout) {
     messageShow = '请求超时';
   }
-  if (error.isBusiness) {
+  if (error.isAfterSuccess) {
     messageShow = error.message
   }
   if (!messageShow) return;
