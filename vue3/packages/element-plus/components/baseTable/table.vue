@@ -1,4 +1,5 @@
 <template>
+  
   <div class="cp-base-table" ref="cp-base-table">
     <!--    表格上部分操作栏-->
     <div class="topActions" :data-reverse="topActionsReverse" v-if="showToActions" ref="top-actions">
@@ -15,6 +16,7 @@
         <el-button :icon="Operation" size="small" circle @click="clickTableConfiguration"></el-button>
       </div>
     </div>
+    <el-config-provider :locale="locale">
     <div class="table-box">
     <!--    主表格渲染-->
     <el-table
@@ -104,8 +106,10 @@
           :total="pagination.total || 0">
       </el-pagination>
     </div>
+    </el-config-provider>
     <tableConfiguration v-if="useTableTool && delayMounted" ref="tableConfiguration" @change="changeHide" :columnsData="internalColumns"></tableConfiguration>
   </div>
+
 </template>
 
 <script setup>
@@ -113,16 +117,25 @@ import {
   Refresh,
   Operation
 } from '@element-plus/icons-vue'
+
 </script>
 
 <script>
 import { dictTranslate } from '@hykj-js/vue3-hooks';
+import {ElPagination, ElTable, ElTableColumn, ElTooltip,ElConfigProvider} from "element-plus";
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 export default {
   components: {
     tableConfiguration: defineAsyncComponent(() => import('./tableConfiguration.vue')),
+    ElTable,
+    ElTableColumn,
+    ElPagination,
+    ElTooltip,
+    ElConfigProvider
   },
   data() {
     return {
+      locale: zhCn,
       // 自动高度
       tableHeight: 0,
       // 选中数据
