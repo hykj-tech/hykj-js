@@ -21,7 +21,6 @@ const emptyConfig: Config = {
   isBrowser: false,
   platform: '',
   isDev: false,
-  configMode: 'prod'
 }
 export class ConfigUtil {
   // 所有模式的配置
