@@ -405,7 +405,10 @@ async function normalUpload(file: UploadAnyFile) {
       url,
       method,
       data,
-      headers,
+      headers:{
+        ...headers,
+        'Content-Type': 'multipart/form-data'
+      } ,
       onUploadProgress: (progressEvent: any) => {
         file.raw!.progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
       },
