@@ -26,9 +26,9 @@ export const setUpUniSafeToast = ()=>{
 // hideLoading需要拦截，如果当前有showToast的流程，就一直等待到没有
   const hideLoading = () => {
     if (globalToastList.length) {
-      // setTimeout(() => {
-      //   hideLoading();
-      // }, 100);
+      setTimeout(() => {
+        hideLoading();
+      }, 100);
     } else {
       originHideLoading();
     }
