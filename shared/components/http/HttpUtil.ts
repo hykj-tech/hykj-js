@@ -103,7 +103,7 @@ export class HttpUtil {
       baseUrl = this.C.BASE_URL()
     }else{
       baseUrl = this.C.BASE_URL || ''
-    } 
+    }
     if (config.url?.startsWith('http')) {
       baseUrl = ''
     }
@@ -154,7 +154,7 @@ class ResHandler {
   response: AxiosResponse;
   statusValidator: ((status: number) => boolean) | undefined;
   businessValidator: ((data: any) => boolean ) | undefined;
-  businessErrorMessageFields: string[] 
+  businessErrorMessageFields: string[]
   constructor(
     response: AxiosResponse,
     options?: {
@@ -166,7 +166,7 @@ class ResHandler {
     this.response = response;
     this.statusValidator = options?.statusValidator;
     this.businessValidator = options?.businessValidator;
-    this.businessErrorMessageFields = options?.businessErrorMessageFields 
+    this.businessErrorMessageFields = options?.businessErrorMessageFields
     || ['msg', 'errmsg', 'message']
   }
   get status() {
@@ -260,7 +260,15 @@ export class HttpRequestError extends Error {
     // 记录请求路径
     const { baseURL, url, params } = this.#config;
     const urlFromConfig = (baseURL || '') + (url || '');
-    const paramsStringFromConfig = new URLSearchParams(params).toString();
+    // const paramsStringFromConfig = new URLSearchParams(params).toString();
+    // 换一种写法，URLSearchParams在uni-app中不支持
+    let paramsStringFromConfig = '';
+    if (params) {
+      const keys = Object.keys(params);
+      paramsStringFromConfig = keys
+        .map((key) => `${key}=${params[key]}`)
+        .join('&');
+    }
     this.requestUrl =
       urlFromConfig +
       (paramsStringFromConfig ? `?${paramsStringFromConfig}` : '');
