@@ -62,7 +62,7 @@
           <div v-else :style="{...columnHeaderStyle(column)}">{{ column.label }}</div>
         </template>
         <template v-slot="scope">
-          <!-- 支持tooltip配置 -->
+          <!-- 支持tooltip配置: tooltip不建议使用，废弃 -->
           <el-tooltip
               :disabled="column.tooltip !== true"
               effect="dark"
@@ -152,6 +152,7 @@ export default {
       return this.internalColumns
           // 一些属性的转换
           .map(column => {
+            // 建议不再使用tooltip属性，使用show-overflow-tooltip
             if (column['showOverflowTooltip']  || column['overflowTooltip']){
               column['show-overflow-tooltip'] = true;
             }
@@ -552,6 +553,7 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: block !important;
   }
   .pagination {
     display: flex;
