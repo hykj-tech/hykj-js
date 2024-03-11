@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@hykj-js/vue3-element-plus": "workspace:^",
-    "vue": "^3.3.8"
+    "@hykj-js/vue3-element-plus": "workspace:^"
   }
 }

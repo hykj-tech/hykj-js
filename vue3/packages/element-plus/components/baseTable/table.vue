@@ -11,7 +11,7 @@
       <!--      操作栏自带的表格工具-->
       <div class="tableTool" v-if="useTableTool">
         <!--        刷新-->
-        <el-button :icon="Refresh" size="small" circle @click="clickRefresh"></el-button>
+        <el-button :icon="Refresh" size="small" s circle @click="clickRefresh"></el-button>
         <!--        表格配置-->
         <el-button :icon="Operation" size="small" circle @click="clickTableConfiguration"></el-button>
       </div>
