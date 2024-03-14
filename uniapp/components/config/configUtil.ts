@@ -32,7 +32,7 @@ export class ConfigUtil {
   constructor() {
     this.ConfigList = {}
   }
-
+  public getConfigList = () => this.ConfigList
   // 注册配置，提供一个modeKey， 一个配置对象
   public registerConfig(modeKey: string, config: Partial<GlobalConfig>) {
     this.ConfigList[modeKey] = Object.assign({}, emptyConfig, config)
