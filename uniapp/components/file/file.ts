@@ -9,6 +9,7 @@ export const commonFileUpload = async (
 ) => {
   return FetchData({
     url: url,
+    ignoreBusinessValidate: true,
     useFileUpload: true,
     signal: signal ?? undefined,
     fileUploadParams: {
@@ -34,6 +35,7 @@ export const uniDownloadFile = async (
 ) => {
   return FetchData<UniApp.DownloadSuccessData>({
     url,
+    ignoreBusinessValidate: true,
     useFileDownload: true,
     disableAuthorization: true,
     signal: signal ?? undefined,
