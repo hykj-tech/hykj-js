@@ -97,6 +97,7 @@
     <div class="pagination" :style="{justifyContent : paginationJustify}" v-if="usePagination" ref="pagination">
       <el-pagination
           background
+          :teleported="useTeleported"
           @size-change="$emit('size-change', $event)"
           @current-change="$emit('current-change', $event)"
           v-model:current-page="pagination.current"
@@ -208,7 +209,10 @@ export default {
       // const result = Object.assign(defaultOption,  otherOptionProps,this.tableOptions);
       // console.log(result);
       return Object.assign(defaultOption, otherOptionProps,this.tableOptions);
-    }
+    },
+    useTeleported() {
+      return this.teleported;
+    },
   },
   mounted() {
     setTimeout(()=>{
@@ -399,6 +403,11 @@ export default {
     },
   },
   props: {
+    // 是否使用teleported，传false再改变
+    teleported: {
+      type: Boolean,
+      default: true
+    },
     // 表格是否实现高亮
     hightCurrentRow: {
       type: Boolean,
