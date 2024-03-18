@@ -406,7 +406,7 @@ export default {
     // 是否使用teleported
     teleported: {
       type: Boolean,
-      default: false
+      default: true
     },
     // 表格是否实现高亮
     hightCurrentRow: {
