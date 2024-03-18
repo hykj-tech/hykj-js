@@ -403,10 +403,10 @@ export default {
     },
   },
   props: {
-    // 是否使用teleported，传false再改变
+    // 是否使用teleported
     teleported: {
       type: Boolean,
-      default: true
+      default: false
     },
     // 表格是否实现高亮
     hightCurrentRow: {
