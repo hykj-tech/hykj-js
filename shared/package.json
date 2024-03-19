@@ -1,12 +1,17 @@
 {
   "name": "@hykj-js/shared",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "shared libraries for hykj-js",
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "keywords": ["hykj-js"],
+  "author": "www.hykj.site",
+  "license": "Proprietary",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build"
   },
-  "keywords": [],
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
     "axios": "^1.6.5",
@@ -15,8 +20,6 @@
     "loglevel": "^1.8.1",
     "qs": "^6.11.2"
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@amap/amap-jsapi-types": "^0.0.13",
     "@types/lodash-es": "^4.17.12",

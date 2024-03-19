@@ -6,11 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["hykj-js"],
+  "author": "www.hykj.site",
+  "license": "Proprietary",
   "dependencies": {
     "@hykj-js/shared": "workspace:^",
     "@vueuse/core": "^10.7.1"
   },
-  "author": "",
-  "license": "ISC"
+  "peerDependencies": {
+    "@hykj-js/shared":"^0.0.1",
+    "@vueuse/core": "^10.7.1"
+  }
 }
+
