@@ -8,7 +8,7 @@ export default defineConfig({
       entry: 'index.ts',
       name: '@hykj-js/shared',
       formats: ['es'],
-      fileName: 'index'
+      fileName: 'index',
     },
     rollupOptions: {
       external: ['axios', 'dayjs', 'lodash-es', 'loglevel', 'qs'],
@@ -19,7 +19,8 @@ export default defineConfig({
           'lodash-es': 'lodash',
           loglevel: 'loglevel',
           qs: 'qs'
-        }
+        },
+        chunkFileNames: '[name]-[hash].js'
       },
       plugins: [
         dts({

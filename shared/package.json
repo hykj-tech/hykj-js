@@ -1,6 +1,6 @@
 {
   "name": "@hykj-js/shared",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "shared libraries for hykj-js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,9 +8,14 @@
   "keywords": ["hykj-js"],
   "author": "www.hykj.site",
   "license": "Proprietary",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "vite build"
+    "build": "tsc --noEmit && vite build"
   },
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",

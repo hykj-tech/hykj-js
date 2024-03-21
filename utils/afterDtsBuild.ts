@@ -55,5 +55,7 @@ export const checkGlobalExtendAfterDtsBuild = (map: Map<string, string>)=>{
       globalExtendComponents.push(componentName)
     }
   })
-  console.log(`写入global-extend的组件: ${globalExtendComponents.join(', ')}。`)
+  if(globalExtendComponents.length !== 0){
+    console.log(`写入global-extend的组件: ${globalExtendComponents.join(', ')}。`)
+  }
 }

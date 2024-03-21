@@ -10,11 +10,14 @@
     "moduleResolution": "node",
     "noEmit": true,
     "types": ["@dcloudio/types"],
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "rootDir": "."
   },
   "include": [
     "index.ts",
     "components/**/*.ts",
     "components/**/*.d.ts",
-    "../shared/**/*.d.ts"
+    "../shared/**/*.d.ts" // 这个是为了在shared不编译时也能得到global-extend的提示
   ],
 }

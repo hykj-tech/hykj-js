@@ -1,14 +1,25 @@
 {
   "name": "@hykj-js/uniapp",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "version": "0.0.2",
+  "description": "uniapp libraries for hykj-js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "keywords": [
+    "hykj-js",
+    "uniapp"
+  ],
+  "author": "www.hykj.site",
+  "license": "Proprietary",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --noEmit && vite build"
+  },
   "dependencies": {
     "@hykj-js/shared": "workspace:^",
     "axios": "^1.6.5",

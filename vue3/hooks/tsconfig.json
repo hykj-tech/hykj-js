@@ -1,26 +1,19 @@
 {
   "compilerOptions": {
+    "declaration":true,
+    "composite": true,
     "outDir": "dist",
     "target": "ES2020",
-    "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "moduleResolution": "node",
     "noEmit": true,
-    "baseUrl": ".",
-    "rootDir": "."
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "index.ts",
-    "installer.ts",
-    "utils/**/*.ts",
-    "vite-env.d.ts",
     "components/**/*.ts",
-    "components/**/*.vue",
-    "../../../shared/**/*.d.ts"
-  ],
-  "references": [
-    { "path": "./tsconfig.node.json" }
+    "components/**/*.d.ts"
   ]
 }

@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import {computed, onBeforeUnmount, ref, watch} from "vue";
 import {ElEmpty, ElDialog} from 'element-plus';
-import {previewDialogBus} from "@hykj-js/vue3-element-plus/components/mediaFilePreview/event.ts";
+import {previewDialogBus} from "./event";
 interface Props {
   // 对话框标题
   title?: string,

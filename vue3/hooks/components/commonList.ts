@@ -1,4 +1,4 @@
-import {reactive} from "vue";
+import {computed, isReactive, reactive, ref, toRaw} from "vue";
 import {useDebounceFn} from "@vueuse/core";
 import {structuredClone} from "@hykj-js/shared";
 
@@ -13,6 +13,11 @@ type ListPagination = {
   size: number,
   // 列表总
   total?: number
+}
+
+export interface changeQueryOptions {
+  // 去抖
+  debounce?: number
 }
 
 export type FetchFuncResult<RowType = any> =  {
@@ -178,10 +183,6 @@ export const useCommonList = <RowType>(
     pagination.total = 0;
   }
 
-  interface changeQueryOptions {
-    // 去抖
-    debounce?: number
-  }
 
   /**
    * 搜索发生变化

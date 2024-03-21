@@ -25,7 +25,7 @@ interface MediaFilePreviewOptions {
   previewType?: 'video' | 'audio' | 'document' | 'archive' | string
 }
 import { createApp } from 'vue';
-import {previewDialogBus} from "./event.ts";
+import {previewDialogBus} from "./event";
 
 /**
  * 打开文件预览对话框

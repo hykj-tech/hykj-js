@@ -1,4 +1,5 @@
 // 这个模块的内容依赖于Config配置功能，确保使用时已经注入了全局Config
+
 declare global{
   const CONFIG: GlobalConfig
 }

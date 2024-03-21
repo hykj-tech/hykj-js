@@ -1,7 +1,7 @@
 import type { DictObj } from './index';
 import {reactive} from 'vue';
 import {globalDictDataStore} from "./index";
-export const localDictData: reactive<Record<string, DictObj[]>> = {
+export const localDictData = reactive<Record<string, DictObj[]>>({
   // 是否启用
   // enable: [
   //   {text: '启用', value: 1, style: {color: '#67C23A'}},
@@ -12,11 +12,11 @@ export const localDictData: reactive<Record<string, DictObj[]>> = {
     {text: '是', value: 1},
     {text: '否', value: 0},
   ],
-};
+});
 
 // 本地字典扩展，根据字典的value定位对对应的字典项进行数据扩展（覆盖）
-export const dictDataExtend: reactive<Record<string, DictObj[]>> = {
-};
+export const dictDataExtend = reactive<Record<string, DictObj[]>>({
+});
 
 // 外部注册本地字典数据
 export function registerLocalDictData(dictKey: string, dictData: DictObj[]) {

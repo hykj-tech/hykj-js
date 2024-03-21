@@ -28,7 +28,7 @@
           :disabled="elementOptions.disabled"
           :key="item.value"
           v-for="item in dictData"
-          v-model="_value"
+          v-model="_value as string"
           :label="item.value"
       >{{ item.text }}
       </el-radio
@@ -81,7 +81,7 @@ type Props = {
   multiple?: boolean,
   clearable?: boolean,
   placeholder?: string,
-  size?: string,
+  size?: "" | "small" | "default" | "large",
   styleDisplay?: boolean,
   // element组件的其他属性
   options?: Record<string, any>,
@@ -115,11 +115,11 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '请选择',
   size: '',
   styleDisplay: false,
-  options: {},
-  treeOptions: {},
+  options: {} as any,
+  treeOptions: {} as any,
   filterable: false,
   disableLoading: false,
-  cacheData: [],
+  cacheData: [] as any,
   teleported: false,
 })
 
@@ -146,13 +146,7 @@ const elementOptions = computed(() => {
         placeholder: props.placeholder,
       },
       props.options
-  ) as {
-    size: string,
-    disabled: boolean,
-    clearable: boolean,
-    multiple: boolean,
-    placeholder: string,
-  };
+  ) 
 })
 
 // tree组件属性
@@ -232,14 +226,14 @@ const emit = defineEmits(['update:modelValue', 'change'])
 const _value = computed({
   get() {
     if (props.multiple) {
-      return internalState.value.map(i => i?.toString())
+      return (internalState.value as string[]).map(i => i?.toString())
     }
     return internalState.value?.toString() || ''
   },
   set(v) {
-    let value = v?.toString()
+    let value: string | string[] = v?.toString()
     if(props.multiple){
-      value = v.map(i => i?.toString())
+      value = (v as string[]).map(i => i?.toString())
     }
     internalState.value = value as any
     emit('update:modelValue', value)
