@@ -3,7 +3,7 @@ import {UploadAnyFile} from "./type";
 export type FileType = 'image' | 'audio' | 'video' | 'document' | 'archive';
 // 常见文件类型
 export const fileTypes = {
-  image: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'],
+  image: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'ifft', 'jfif'],
   audio: ['mp3', 'wmv', 'ogg', 'aac', 'wav', 'ape', 'flac'],
   video: [
     'mp4',

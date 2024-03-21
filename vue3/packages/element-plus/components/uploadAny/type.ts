@@ -1,4 +1,4 @@
-import {FileType} from "./utils.ts";
+import {FileType} from "./utils";
 import {BeforeNormalUploadPayload} from "./configUpload";
 
 /**
