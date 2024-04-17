@@ -44,13 +44,13 @@ export type BaseTableProps = {
   notZeroNumber?: boolean;
    // 自定义列，columns代表每一列的定义，都使用el-table-column的参数定义
   // 同时支持color，tooltip，formatter，styles，ellipsis几种功能 
-  columns?: any[]; 
+  columns?: BaseColumnProps[]; 
    // 全局的列对齐
   columnAlign?: string;
  // 解构el-table的所有属性
   tableOptions?: any;
   
-  data?: Array<[]>;
+  data?: any[];
   // loading动画
   loading?: boolean;
    // topActions布局反向
@@ -59,9 +59,17 @@ export type BaseTableProps = {
  // 用于判断表格是否展开子元素
   showTdChildren?: boolean;
   // 指定展开哪一个
-  openKey?: [] ; 
+  openKey?: string[] ; 
 };
 
+export type BaseColumnProps = {
+  prop: string;
+  label: string;
+  dictKey?: string;
+  styles?: (value: any, row: any, allData: any[]) => Record<string, string>;
+  formatter?: (value: any, row: any, allData: any[]) => any;
+  [key:string]: any
+}
 
 
 export type styleType = {

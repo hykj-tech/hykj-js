@@ -4,6 +4,7 @@ index.ts
 tsconfig.json
 vite.config.ts
 utils
+!dist/utils
 installer.ts
 tsconfig.node.json
 vite-env.d.ts

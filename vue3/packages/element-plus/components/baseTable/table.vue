@@ -151,7 +151,6 @@ import {
   ElTable,
   ElTableColumn,
   ElTooltip,
-  ElConfigProvider,
 } from "element-plus";
 const TableConfiguration = defineAsyncComponent(() => import('./tableConfiguration.vue'));
 
@@ -177,7 +176,8 @@ const props = withDefaults(defineProps<BaseTableProps>(), {
   usePagination: false,
   rowKey: "",
   pagination:{
- sizes: [10, 25, 50, 100],
+    // @ts-ignore
+    sizes: [10, 25, 50, 100],
     layout: "total, sizes, prev, pager, next, jumper",
     total: 0,
     current: 1,
