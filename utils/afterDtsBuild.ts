@@ -3,14 +3,14 @@
 // 检测源码./components/xxx/global-extend.d.ts文件是否存在，如果存在，就复制到dist/components/xxx/global-extend.d.ts
 // 并向index.d.ts中添加export *  './components/xxx/global-extend.d.ts'
 import fs from 'fs'
-import {join} from 'path'
+import {join,normalize} from 'path'
 
 const buildRoot = process.cwd()
 export const checkGlobalExtendAfterDtsBuild = (map: Map<string, string>)=>{
   console.log('检查global-extend.d.ts文件...')
   // 待检测的path, 默认的，加入了./components/的路径
   const checkPaths = [
-    join(buildRoot, 'components'), 
+    normalize(join(buildRoot, 'components')), 
     ]
   for (let [key, value] of map) {
     if (key.includes('dist/components/')) {
@@ -45,7 +45,8 @@ export const checkGlobalExtendAfterDtsBuild = (map: Map<string, string>)=>{
         fs.appendFileSync(indexDtsPath, '\n// global-extend.d.ts\n')
         hasGlobalExtend = true
       }
-      const componentName = path.split('components/')[1]
+      // window上的路径分隔符是\，这里为了兼容，直接slice(1)，去掉第一个/或者\
+      const componentName = path.split('components')[1].slice(1)
       const importPath = `export * from './components/${componentName}/global-extend'\n`
       if(indexDtsContent.includes(importPath)){
         // console.log(`已存在${importPath}，跳过`)
@@ -56,6 +57,7 @@ export const checkGlobalExtendAfterDtsBuild = (map: Map<string, string>)=>{
     }
   })
   if(globalExtendComponents.length !== 0){
-    console.log(`写入global-extend的组件: ${globalExtendComponents.join(', ')}。`)
+    console.log(`写入global-extend的组件:`, globalExtendComponents)
+    
   }
 }
