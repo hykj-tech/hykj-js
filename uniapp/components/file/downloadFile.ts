@@ -1,8 +1,6 @@
 // 这个模块的内容依赖于Config配置功能，确保使用时已经注入了全局Config
-import { Config } from '../CONFIG'
-
-declare global {
-  const CONFIG: Config
+declare global{
+  const CONFIG: GlobalConfig
 }
 
 import { uniDownloadFile } from './file'
@@ -69,6 +67,7 @@ export const commonDownLoadFile = async (url: string, options?: IDownloadFileOpt
     // app环境下，只用plus.io和downloader相关API
     if (CONFIG.platform.includes('APP')) {
       savedFilePath = await downloadFileInApp(fileUrl, options)
+      // console.info(`[commonDownLoadFile] app环境下下载文件: ${savedFilePath}`, )
     } else {
       // 其他环境，比如小程序
       // 使用uni的临时下载模式
