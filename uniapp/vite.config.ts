@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 import { checkGlobalExtendAfterDtsBuild } from '../utils/afterDtsBuild'
+import { restoreUniappIfDef } from '../utils/restoreUniappIfDef';
 
 export default defineConfig({
   build: {
@@ -18,11 +19,14 @@ export default defineConfig({
           qs: 'qs',
           '@hykj-js/shared': 'shared'
         },
-        chunkFileNames: '[name]-[hash].js'
+        chunkFileNames: '[name]-[hash].js',
       },
       plugins: [
         dts({
-          afterBuild: checkGlobalExtendAfterDtsBuild
+          afterBuild: (map)=>{
+            checkGlobalExtendAfterDtsBuild(map);
+            restoreUniappIfDef();
+          }
         })
       ]
     },

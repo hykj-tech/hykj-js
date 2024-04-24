@@ -6,6 +6,8 @@ import fs from 'fs'
 import {join,normalize} from 'path'
 
 const buildRoot = process.cwd()
+
+// 检查global-extend.d.ts文件并移动到dist
 export const checkGlobalExtendAfterDtsBuild = (map: Map<string, string>)=>{
   console.log('检查global-extend.d.ts文件...')
   // 待检测的path, 默认的，加入了./components/的路径
