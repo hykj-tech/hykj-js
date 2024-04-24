@@ -1,6 +1,6 @@
 {
   "name": "@hykj-js/uniapp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "uniapp libraries for hykj-js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
