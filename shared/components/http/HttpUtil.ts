@@ -140,8 +140,8 @@ export class HttpUtil {
           await callback(error);
         }
       }
-      const res = error.response;
-      return [res?.data || null, error];
+      // const res = error.response;
+      return [null, error];
     }
   }
 }
@@ -191,20 +191,23 @@ class ResHandler {
     return result;
   }
 
-  resolve(): [AxiosResponse, HttpRequestError | undefined] {
-    let result = [this.response, undefined] as [
-      AxiosResponse,
-        HttpRequestError | undefined
+  resolve(): [AxiosResponse | null, HttpRequestError | null] {
+    let result = [this.response, null] as [
+      AxiosResponse | null,
+        HttpRequestError | null
     ];
     const config = this.response.config as AxiosRequestConfigExtend;
+    // 这个时候是status错误
     if (!Boolean(config.ignoreStatusValidate) && !this.validateStatus()) {
       const err = new HttpRequestError({
-        message: `系统错误(${this.status})`,
+        message: `HTTP错误(${this.status})`,
         config: this.response.config,
         response: this.response,
       });
-      result = [this.response, err];
+      result = [null, err];
+      return result;
     }
+    // 开始校验业务错误
     if (!Boolean(config.ignoreBusinessValidate) && !this.validateBusiness()) {
       let message = '请求出错'
       for(const field of this.businessErrorMessageFields){
@@ -219,7 +222,8 @@ class ResHandler {
         config: this.response.config,
         response: this.response,
       });
-      result = [this.response, err];
+      result = [null, err];
+      return result
     }
     return result;
   }
