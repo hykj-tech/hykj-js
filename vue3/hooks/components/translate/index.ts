@@ -97,6 +97,7 @@ export async function updateDictData(
         .sort((a, b) => a.sort - b.sort)
         .map(item => {
           item.value = item.value?.toString();
+          item.dictKey = dictKey;
           if (dictDataExtend[item.dictKey]) {
             const extendItem = dictDataExtend[item.dictKey].find(
               i => i.value?.toString() === item.value?.toString()
