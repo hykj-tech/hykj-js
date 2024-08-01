@@ -21,7 +21,7 @@
   "dependencies": {
     "@hykj-js/shared": "workspace:^",
     "@vueuse/core": "^10.7.1",
-    "vue": "3.4.21"
+     "vue-demi": ">=0.14.8"
   },
   "peerDependencies": {
     "@hykj-js/shared": "workspace:^",

@@ -125,9 +125,7 @@
         v-model:current-page="internalPagination.current"
         v-model:page-size="internalPagination.size"
         :page-sizes="internalPagination.sizes"
-        :layout="
-          internalPagination.layout
-        "
+        :layout="internalPagination.layout"
         :total="internalPagination.total"
       >
       </el-pagination>
@@ -143,18 +141,26 @@
 
 <script lang="ts" setup>
 import { Refresh, Operation } from "@element-plus/icons-vue";
-import { BaseTableSate, BaseTableProps, styleType, BaseTablePagination } from "./type";
-import { dictTranslate } from "@hykj-js/vue3-hooks";
-import { getCurrentInstance,defineAsyncComponent  } from "vue";
 import {
-  ElPagination,
-  ElTable,
-  ElTableColumn,
-  ElTooltip,
-} from "element-plus";
-const TableConfiguration = defineAsyncComponent(() => import('./tableConfiguration.vue'));
-
-import { ref, reactive, watch, onMounted, nextTick, computed } from "vue";
+  BaseTableSate,
+  BaseTableProps,
+  styleType,
+  BaseTablePagination,
+} from "./type";
+import { dictTranslate } from "@hykj-js/vue3-hooks";
+import {
+  getCurrentInstance,
+  defineAsyncComponent,
+  ref,
+  reactive,
+  watch,
+  onMounted,
+  computed,
+} from "vue";
+import { ElPagination, ElTable, ElTableColumn, ElTooltip } from "element-plus";
+const TableConfiguration = defineAsyncComponent(
+  () => import("./tableConfiguration.vue")
+);
 
 // 组件的状态
 const state = reactive<BaseTableSate>({
@@ -192,24 +198,35 @@ const props = withDefaults(defineProps<BaseTableProps>(), {
 });
 
 // 由于pagination类型问题，这里还是维护一个内部pagination对象
-const internalPagination = reactive<BaseTablePagination>(Object.assign({
-  current: 1,
-  size: 10,
-  total: 0,
-  sizes: [10, 25, 50, 100],
-  layout: "total, sizes, prev, pager, next, jumper",
-}, props.pagination || {}));
+const internalPagination = reactive<BaseTablePagination>(
+  Object.assign(
+    {
+      current: 1,
+      size: 10,
+      total: 0,
+      sizes: [10, 25, 50, 100],
+      layout: "total, sizes, prev, pager, next, jumper",
+    },
+    props.pagination || {}
+  )
+);
 
-watch(()=> props.pagination, (newVal) => {
-  Object.assign(internalPagination, newVal);
-}, {deep: true});
+watch(
+  () => props.pagination,
+  (newVal) => {
+    Object.assign(internalPagination, newVal);
+  },
+  { deep: true }
+);
 
-watch(()=> [internalPagination.current, internalPagination.size], (newVal) => {
-  // 直接修改props中的pagination对象属性
-  props.pagination.current = internalPagination.current;
-  props.pagination.size = internalPagination.size;
-});
-
+watch(
+  () => [internalPagination.current, internalPagination.size],
+  (newVal) => {
+    // 直接修改props中的pagination对象属性
+    props.pagination.current = internalPagination.current;
+    props.pagination.size = internalPagination.size;
+  }
+);
 
 // 最终渲染的列
 const finalColumns = computed(() => {
@@ -239,7 +256,7 @@ const finalColumns = computed(() => {
 const instance = getCurrentInstance();
 // 是否显示 topActions
 const showToActions = computed(() => {
-  return props.useTableTool || instance.slots['top-actions'];
+  return props.useTableTool || instance.slots["top-actions"];
 });
 
 // 表格组件的父容器
@@ -271,7 +288,11 @@ const tableOptionsToUse = computed(() => {
   if (props.rowKey) {
     otherOptionProps["row-key"] = props.rowKey;
   }
-  return Object.assign(defaultOption, otherOptionProps, props.tableOptions || {});
+  return Object.assign(
+    defaultOption,
+    otherOptionProps,
+    props.tableOptions || {}
+  );
 });
 
 // 是否使用 teleported

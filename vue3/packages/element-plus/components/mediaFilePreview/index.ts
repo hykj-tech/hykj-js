@@ -24,7 +24,7 @@ interface MediaFilePreviewOptions {
   useWindowOpen?: boolean,
   previewType?: 'video' | 'audio' | 'document' | 'archive' | string
 }
-import { createApp } from 'vue';
+import { createApp } from 'vue-demi';
 import {previewDialogBus} from "./event";
 
 /**

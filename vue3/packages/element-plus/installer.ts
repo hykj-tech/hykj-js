@@ -1,4 +1,4 @@
-import {App} from 'vue'
+import {App} from 'vue-demi'
 import { TestCp } from './components/testCp'
 import {BaseTable} from './components/baseTable'
 import {UploadAny} from "./components/uploadAny";

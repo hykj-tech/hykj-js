@@ -23,6 +23,7 @@ export default defineConfig({
         'element-plus',
         'vue',
         'mitt',
+        'vue-demi'
       ],
       output: {
         globals: {

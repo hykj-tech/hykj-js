@@ -1,7 +1,7 @@
 import {translateDefineList, registerTranslateDefine as rtd} from './dictDefine';
 import {findInTree} from '@hykj-js/shared';
 import {localDictData, dictDataExtend, registerLocalDictData as rldd, registerLocalDictDataExtend as rldde} from './localDictData'
-import {computed, reactive,} from 'vue';
+import {computed, reactive,} from 'vue-demi';
 
 // 供外部使用调用的定义翻译数据的方法
 // 定义动态翻译数据更新行为

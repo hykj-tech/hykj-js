@@ -1,7 +1,7 @@
-import {ref} from "vue";
+import { ref } from "vue-demi";
 
-export const useCommonToggle = () => {
-  const value = ref(false);
+export const useCommonToggle = function(){
+  const value = ref<boolean>(false);
   const open = () => {
     value.value = true;
   }

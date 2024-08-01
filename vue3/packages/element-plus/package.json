@@ -28,7 +28,8 @@
     "axios": "^1.6.5",
     "byte-size": "^8.1.1",
     "element-plus": "^2.4.3",
-    "mitt": "^3.0.1"
+    "mitt": "^3.0.1",
+    "vue-demi": ">=0.14.8"
   },
   "devDependencies": {
     "@types/byte-size": "^8.1.2",

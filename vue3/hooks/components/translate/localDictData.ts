@@ -1,5 +1,5 @@
 import type { DictObj } from './index';
-import {reactive} from 'vue';
+import {reactive} from 'vue-demi';
 import {globalDictDataStore} from "./index";
 export const localDictData = reactive<Record<string, DictObj[]>>({
   // 是否启用

@@ -11,12 +11,13 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['@hykj-js/shared', '@vueuse/core', 'vue' ],
+      external: ['@hykj-js/shared', '@vueuse/core', 'vue', 'vue-demi' ],
       output: {
         globals: {
           '@hykj-js/shared': 'shared',
           '@vueuse/core': 'vueuse',
-           vue: 'Vue'
+           vue: 'Vue',
+           Ref: 'Ref'
         },
         chunkFileNames: '[name]-[hash].js'
       },

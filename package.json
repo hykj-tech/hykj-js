@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "play": "pnpm -r --filter play run dev",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "pnpm -r --filter !play run build",
     "build:uniapp": "pnpm --filter uniapp run build",
@@ -30,5 +31,8 @@
   },
   "dependencies": {
     "vue": "3.4.21"
+  },
+  "resolutions": {
+    "vue-demi": "^0.14.10"
   }
 }

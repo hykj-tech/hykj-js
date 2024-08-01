@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onBeforeUnmount, ref, watch} from "vue";
+import {computed, onBeforeUnmount, ref, watch} from "vue-demi";
 import {ElEmpty, ElDialog} from 'element-plus';
 import {previewDialogBus} from "./event";
 interface Props {

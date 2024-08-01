@@ -1,4 +1,4 @@
-import type { AppContext, Plugin } from 'vue'
+import type { AppContext, Plugin } from 'vue-demi'
 
 export type SFCWithInstall<T> = T & Plugin
 
