@@ -9,6 +9,14 @@ export type BaseTableSate ={
   delayMounted:boolean
 }
 
+export type BaseTablePagination = {
+  sizes?: number[];
+  layout?: string;
+  total?: number;
+  current?: number;
+  size?: number;
+}
+
 export type BaseTableProps = {
   // 是否使用teleported
   teleported?: boolean;
@@ -19,13 +27,7 @@ export type BaseTableProps = {
   // 分页组件对齐, justify-content内容
   paginationJustify?: string;
    // 分页相关参数绑定，需以对象直接传入, 分别为sizes,layout,total,current,size
-  pagination?: {
-    sizes?: number[];
-    layout?: string;
-    total?: number;
-    current?: number;
-    size?: number;
-  };
+  pagination?: BaseTablePagination;
   // 启用分页组件
   usePagination?: boolean;
     // 通el-table-column的selectable属性，只是这里统一放在selection的列中
@@ -48,7 +50,7 @@ export type BaseTableProps = {
    // 全局的列对齐
   columnAlign?: string;
  // 解构el-table的所有属性
-  tableOptions?: any;
+  tableOptions?: Record<string, any>;
   
   data?: any[];
   // loading动画

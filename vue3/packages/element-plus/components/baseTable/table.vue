@@ -100,7 +100,7 @@
                 style="display: inline-block"
                 :class="{ textOverflow: column['show-overflow-tooltip'] }"
                 v-else
-                :style="{ ...columnStyles(column, scope.row) }"
+                :style="({ ...columnStyles(column, scope.row) } as any)"
               >
                 {{ columnValueShow(column, scope.row, scope.$index) }}
               </div>
@@ -122,13 +122,13 @@
         :teleported="useTeleported"
         @size-change="$emit('size-change', $event)"
         @current-change="$emit('current-change', $event)"
-        v-model:current-page="props.pagination.current"
-        v-model:page-size="props.pagination.size"
-        :page-sizes="props.pagination.sizes || [10, 25, 50, 100]"
+        v-model:current-page="internalPagination.current"
+        v-model:page-size="internalPagination.size"
+        :page-sizes="internalPagination.sizes"
         :layout="
-          props.pagination.layout || 'total, sizes, prev, pager, next, jumper'
+          internalPagination.layout
         "
-        :total="props.pagination.total || 0"
+        :total="internalPagination.total"
       >
       </el-pagination>
     </div>
@@ -143,7 +143,7 @@
 
 <script lang="ts" setup>
 import { Refresh, Operation } from "@element-plus/icons-vue";
-import { BaseTableSate, BaseTableProps, styleType } from "./type";
+import { BaseTableSate, BaseTableProps, styleType, BaseTablePagination } from "./type";
 import { dictTranslate } from "@hykj-js/vue3-hooks";
 import { getCurrentInstance,defineAsyncComponent  } from "vue";
 import {
@@ -175,14 +175,6 @@ const props = withDefaults(defineProps<BaseTableProps>(), {
   paginationJustify: "flex-end",
   usePagination: false,
   rowKey: "",
-  pagination:{
-    // @ts-ignore
-    sizes: [10, 25, 50, 100],
-    layout: "total, sizes, prev, pager, next, jumper",
-    total: 0,
-    current: 1,
-    size: 10,
-  },
   useSelection: false,
   useReserveSelection: false,
   autoHeight: false,
@@ -190,7 +182,7 @@ const props = withDefaults(defineProps<BaseTableProps>(), {
   notZeroNumber: false,
   // columns: [],
   columnAlign: "",
-  tableOptions: {},
+  tableOptions: null,
   // data: [],
   loading: false,
   topActionsReverse: false,
@@ -198,14 +190,26 @@ const props = withDefaults(defineProps<BaseTableProps>(), {
   showTdChildren: false,
   // openKey: [],
 });
-// props.pagination={}
-//   Object.assign(props.pagination, {
-//     sizes: [10, 25, 50, 100],
-//     layout: "total, sizes, prev, pager, next, jumper",
-//     total: 0,
-//     current: 1,
-//     size: 10,
-//   });
+
+// 由于pagination类型问题，这里还是维护一个内部pagination对象
+const internalPagination = reactive<BaseTablePagination>(Object.assign({
+  current: 1,
+  size: 10,
+  total: 0,
+  sizes: [10, 25, 50, 100],
+  layout: "total, sizes, prev, pager, next, jumper",
+}, props.pagination || {}));
+
+watch(()=> props.pagination, (newVal) => {
+  Object.assign(internalPagination, newVal);
+}, {deep: true});
+
+watch(()=> [internalPagination.current, internalPagination.size], (newVal) => {
+  // 直接修改props中的pagination对象属性
+  props.pagination.current = internalPagination.current;
+  props.pagination.size = internalPagination.size;
+});
+
 
 // 最终渲染的列
 const finalColumns = computed(() => {
@@ -258,7 +262,7 @@ const tableOptionsToUse = computed(() => {
       height: props.height,
     });
   }
-  const ignoreAutoHeight = !!(props.height || props.tableOptions.height);
+  const ignoreAutoHeight = !!(props.height || props.tableOptions?.height);
   // 自动高度
   if (props.autoHeight && state.tableHeight && !ignoreAutoHeight) {
     otherOptionProps.height = state.tableHeight;
@@ -267,7 +271,7 @@ const tableOptionsToUse = computed(() => {
   if (props.rowKey) {
     otherOptionProps["row-key"] = props.rowKey;
   }
-  return Object.assign(defaultOption, otherOptionProps, props.tableOptions);
+  return Object.assign(defaultOption, otherOptionProps, props.tableOptions || {});
 });
 
 // 是否使用 teleported
@@ -294,40 +298,40 @@ function updateInternalColumns() {
 const cpBaseTable = ref();
 const topActions = ref();
 const pagination = ref();
-// 自动检测表格高度
-function updateTableHeight() {
-  nextTick(() => {
-    const cpBaseTableDiv = cpBaseTable.value;
-    const nodeStyle = window.getComputedStyle(cpBaseTableDiv, null);
-    const nodePaddingTop = parseFloat(nodeStyle.paddingTop);
-    const nodePaddingBottom = parseFloat(nodeStyle.paddingBottom);
-    const nodeHeight = parseFloat(nodeStyle.height);
-    let resultHeight = nodeHeight - nodePaddingTop - nodePaddingBottom;
-    // 减去top-actions高度
-    if (showToActions) {
-      const topActionsDiv = topActions.value;
-      if (topActionsDiv) {
-        const topActionsStyle = window.getComputedStyle(topActionsDiv, null);
-        const topActionsHeight =
-          parseFloat(topActionsStyle.height) +
-          parseFloat(topActionsStyle.marginBottom);
-        resultHeight -= topActionsHeight;
-      }
-    }
-    // 减去pagination高度
-    if (props.usePagination) {
-      const paginationDiv = pagination.value;
-      if (paginationDiv) {
-        const paginationStyle = window.getComputedStyle(paginationDiv, null);
-        const paginationHeight =
-          parseFloat(paginationStyle.height) +
-          parseFloat(paginationStyle.marginTop);
-        resultHeight -= paginationHeight;
-      }
-    }
-    state.tableHeight = resultHeight >= 0 ? resultHeight : 0;
-  });
-}
+// 自动检测表格高度，已废弃
+// function updateTableHeight() {
+//   nextTick(() => {
+//     const cpBaseTableDiv = cpBaseTable.value;
+//     const nodeStyle = window.getComputedStyle(cpBaseTableDiv, null);
+//     const nodePaddingTop = parseFloat(nodeStyle.paddingTop);
+//     const nodePaddingBottom = parseFloat(nodeStyle.paddingBottom);
+//     const nodeHeight = parseFloat(nodeStyle.height);
+//     let resultHeight = nodeHeight - nodePaddingTop - nodePaddingBottom;
+//     // 减去top-actions高度
+//     if (showToActions) {
+//       const topActionsDiv = topActions.value;
+//       if (topActionsDiv) {
+//         const topActionsStyle = window.getComputedStyle(topActionsDiv, null);
+//         const topActionsHeight =
+//           parseFloat(topActionsStyle.height) +
+//           parseFloat(topActionsStyle.marginBottom);
+//         resultHeight -= topActionsHeight;
+//       }
+//     }
+//     // 减去pagination高度
+//     if (props.usePagination) {
+//       const paginationDiv = pagination.value;
+//       if (paginationDiv) {
+//         const paginationStyle = window.getComputedStyle(paginationDiv, null);
+//         const paginationHeight =
+//           parseFloat(paginationStyle.height) +
+//           parseFloat(paginationStyle.marginTop);
+//         resultHeight -= paginationHeight;
+//       }
+//     }
+//     state.tableHeight = resultHeight >= 0 ? resultHeight : 0;
+//   });
+// }
 
 // 自定义表头样式
 function columnHeaderStyle(columnItem: any) {
