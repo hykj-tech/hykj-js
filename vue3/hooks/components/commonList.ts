@@ -1,19 +1,16 @@
-import {computed, isReactive, reactive, ref, toRaw} from "vue";
+import {UnwrapNestedRefs, computed, isReactive, reactive, ref, toRaw} from "vue";
 import {useDebounceFn} from "@vueuse/core";
 import {structuredClone} from "@hykj-js/shared";
 
 type ListPagination = {
-  // 可用于el-pagination的布局参数
-  layout?: string,
-  // el-pagination的sizes参数
-  sizes?: string[] | number[],
-  // 当前页数
-  current?: number,
   // 当前页大小
   size: number,
-  // 列表总
+  // 当前页数
+  current: number,
+  // 列表总数
   total?: number
-}
+} & Record<string, any>
+
 
 export interface changeQueryOptions {
   // 去抖
@@ -29,12 +26,24 @@ export type FetchFuncResult<RowType = any> =  {
 
 export type FetchFuncResultTuple<RowType = any> =  [RowType[], number] | [RowType[], number, any]
 
+// 列表方法会携带的参数
+export type FetchFuncParams<RowType = any> = {
+  pagination: {
+    size: number,
+    current: number
+  },
+  list: RowType[],
+  total: number
+}
+
+export type CommonListQuery = Record<string, any> | UnwrapNestedRefs<Record<string, any>>
+
 // 主API的配置
 export type UseCommonListOptions<RowType = any> = {
   // 初始的查询参数对象，这里不再做过多类型处理，外部需要传输响应式数据，这里只做重置query的记录拦截
-  query: any,
+  query: CommonListQuery,
   // 更新列表的方法
-  fetchFunc?: () => Promise<FetchFuncResult<RowType> | FetchFuncResultTuple<RowType> >,
+  fetchFunc?: (params?: FetchFuncParams<RowType>) => Promise<FetchFuncResult<RowType> | FetchFuncResultTuple<RowType> >,
   // 初始的分页参数定义
   pagination?: ListPagination,
   // 当前行数据Key,默认为id
@@ -65,7 +74,8 @@ export const useCommonList = <RowType>(
     rowNow: null as RowType | null | undefined,
   })
   // 分页数据储存
-  const pagination = reactive(Object.assign({
+  const pagination = reactive<ListPagination>(Object.assign({
+    // 预设适配el-table的分页参数
     layout: 'total, sizes, prev, pager, next, jumper',
     sizes: [10, 25, 50, 100],
     current: 1,
@@ -102,9 +112,16 @@ export const useCommonList = <RowType>(
       if (loadDataOptions.loading !== false) {
         state.loading = true;
       }
-      // 使用固定的this.fetchList方法, 要求返回{list,total} 或者 [list,total]
+      // 使用固定的this.fetchList方法, 要求返回{list,total, err} 或者 [list,total, err]
       if (fetchFunc && fetchFunc instanceof Function) {
-        const fetchFuncResult= await fetchFunc() || {};
+        const fetchFuncResult= await fetchFunc({
+          pagination: {
+            size: pagination.size,
+            current: pagination.current
+          },
+          list: state.list as RowType[],
+          total: pagination.total
+        }) || {};
         let s
         let e 
         if(fetchFuncResult instanceof Array && fetchFuncResult.length >= 2){
