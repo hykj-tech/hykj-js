@@ -2,10 +2,10 @@
 import Axios, {
   InternalAxiosRequestConfig,
   AxiosResponse,
-  AxiosInstance
-} from 'axios'
+  AxiosInstance,
+} from "axios";
 
-type BASEURL = string | (() => string)
+type BASEURL = string | (() => string);
 export type HttpUtilConfig = {
   requestTimeout?: number;
   BASE_URL?: BASEURL;
@@ -15,99 +15,107 @@ export type HttpUtilConfig = {
   businessValidator?: (data: any) => boolean;
   // 业务错误的message字段
   businessErrorMessageFields?: string[];
-  adapter?: (config: AxiosRequestConfigExtend) => Promise<any>
-}
+  adapter?: (config: AxiosRequestConfigExtend) => Promise<any>;
+};
 
 /**
  * 请求前置函数定义
  */
-type BeforeFetchDataCallback = (config: AxiosRequestConfigExtend) => void | Promise<void>;
+type BeforeFetchDataCallback = (
+  config: AxiosRequestConfigExtend
+) => void | Promise<void>;
 
 /**
  * 请求后置函数定义
+ */
+type AfterFetchDataCallback = (response: AxiosResponse) => void | Promise<void>;
+
+/**
+ * 请求出错函数定义
  */
 type OnFetchDataErrorCallback = (
   error: HttpRequestError
 ) => void | Promise<void>;
 
-
-
-
 function log(...args: any[]) {
-  console.log('[httpRequest]', ...args);
+  console.log("[httpRequest]", ...args);
+}
+function logError(...args: any[]) {
+  console.error("[httpRequest]", ...args);
 }
 
 export class HttpUtil {
-  private C: HttpUtilConfig
-  private axiosInstance: AxiosInstance
+  private C: HttpUtilConfig;
+  private axiosInstance: AxiosInstance;
   private beforeFetchDataCallbackList: BeforeFetchDataCallback[] = [];
   private onFetchDataErrorCallbackList: OnFetchDataErrorCallback[] = [];
+  private afterFetchDataCallbackList: AfterFetchDataCallback[] = [];
 
   constructor(config?: HttpUtilConfig) {
-    this.C = Object.assign(  {
-      requestTimeout: 5 * 60 * 1000,
-      BASE_URL: ''
-    }, config || {})
+    this.C = Object.assign(
+      {
+        requestTimeout: 5 * 60 * 1000,
+        BASE_URL: "",
+      },
+      config || {}
+    );
     this.axiosInstance = Axios.create({
       validateStatus: null,
       timeout: this.C.requestTimeout,
-      adapter: this.C.adapter || undefined
-    })
+      adapter: this.C.adapter || undefined,
+    });
     // 拦截请求
     this.axiosInstance.interceptors.request.use(
-      (config) =>{
+      (config) => {
         config.validateStatus = null;
         config.baseURL = this.definedBaseUrl(config);
         return config;
       },
-      (error) =>{
-        if(!error.config){
-          log('请求流程内部错误:', error)
+      (error) => {
+        if (!error.config) {
+          log("请求流程内部错误:", error);
         }
         log(`请求发起中断:  ${error.message}, url: ${error.config.url} `);
         const err = new HttpRequestError(error);
         return Promise.reject(err);
       }
-    )
+    );
     // 拦截响应
     this.axiosInstance.interceptors.response.use(
-      (response) =>{
-        const handler = new ResHandler(
-          response,
-          {
-            statusValidator: this.C.statusValidator,
-            businessValidator: this.C.businessValidator,
-            businessErrorMessageFields: this.C.businessErrorMessageFields
-          }
-        );
+      (response) => {
+        const handler = new ResHandler(response, {
+          statusValidator: this.C.statusValidator,
+          businessValidator: this.C.businessValidator,
+          businessErrorMessageFields: this.C.businessErrorMessageFields,
+        });
         const [res, err] = handler.resolve();
         if (err) {
           return Promise.reject(err);
         }
         return res;
       },
-      (error) =>{
-        if(!error.config){
-          log('请求流程内部错误:', error)
+      (error) => {
+        if (!error.config) {
+          log("请求流程内部错误:", error);
         }
         log(`请求响应中断：${error.message}, url: ${error.config.url}`);
         const err = new HttpRequestError(error);
         return Promise.reject(err);
       }
-    )
+    );
   }
 
   private definedBaseUrl(config: AxiosRequestConfigExtend) {
-    let baseUrl = ''
-    if(typeof this.C.BASE_URL === 'function'){
-      baseUrl = this.C.BASE_URL()
-    }else{
-      baseUrl = this.C.BASE_URL || ''
+    let baseUrl = "";
+    if (typeof this.C.BASE_URL === "function") {
+      baseUrl = this.C.BASE_URL();
+    } else {
+      baseUrl = this.C.BASE_URL || "";
     }
-    if (config.url?.startsWith('http')) {
-      baseUrl = ''
+    if (config.url?.startsWith("http")) {
+      baseUrl = "";
     }
-    return baseUrl
+    return baseUrl;
   }
   // 请求前后运行函数注册
   public onBeforeFetchData(callback: BeforeFetchDataCallback) {
@@ -116,36 +124,66 @@ export class HttpUtil {
   public onFetchDataError(callback: OnFetchDataErrorCallback) {
     this.onFetchDataErrorCallbackList.push(callback);
   }
+  public onAfterFetchData(callback: AfterFetchDataCallback) {
+    this.afterFetchDataCallbackList.push(callback);
+  }
   // 全局主请求方法
   public async FetchData<DataType = any>(
     requestOptions: AxiosRequestConfigExtend
-  ):Promise<[DataType | null, HttpRequestError | null]>{
+  ): Promise<[DataType | null, HttpRequestError | null, AxiosResponse | null]> {
+    let res: AxiosResponse | null = null;
     try {
-      if (this.beforeFetchDataCallbackList.length) {
-        for (const callback of this.beforeFetchDataCallbackList) {
-          await callback(requestOptions);
+      try {
+        if (this.beforeFetchDataCallbackList.length) {
+          for (const callback of this.beforeFetchDataCallbackList) {
+            await callback(requestOptions);
+          }
         }
+      } catch (err) {
+        err.isCallbackError = true;
+        throw err;
       }
-      const res = await this.axiosInstance({
+      res = await this.axiosInstance({
         ...requestOptions,
         // 默认请求/
-        url:requestOptions.url || '/'
+        url: requestOptions.url || "/",
       });
-      const data = res.data as DataType;
-      return [data, null];
-    } catch (err) {
-      const error = err as HttpRequestError;
-      if (this.onFetchDataErrorCallbackList.length) {
-        for (const callback of this.onFetchDataErrorCallbackList) {
-          await callback(error);
+      if (this.afterFetchDataCallbackList.length) {
+        try {
+          for (const callback of this.afterFetchDataCallbackList) {
+            await callback(res);
+          }
+        } catch (err) {
+          err.isCallbackError = true;
+          throw err;
         }
       }
+      return [res.data as DataType, null, res];
+    } catch (err) {
+      if (err.isCallbackError && res) {
+        err.response = res;
+        err.config = res.config;
+        res.request = res.request;
+      }
+      let error: HttpRequestError = err;
+      if (!(error instanceof HttpRequestError)) {
+        error = new HttpRequestError(err, requestOptions.url);
+      }
+      try {
+        if (this.onFetchDataErrorCallbackList.length) {
+          for (const callback of this.onFetchDataErrorCallbackList) {
+            await callback(error);
+          }
+        }
+      } catch (err) {
+        // onFetchDataError回调中的错误不会再继续处理
+        logError("onFetchDataErrorCallback error: ", err);
+      }
       // const res = error.response;
-      return [null, error];
+      return [null, error, res];
     }
   }
 }
-
 
 /**
  * 响应处理
@@ -153,21 +191,24 @@ export class HttpUtil {
 class ResHandler {
   response: AxiosResponse;
   statusValidator: ((status: number) => boolean) | undefined;
-  businessValidator: ((data: any) => boolean ) | undefined;
-  businessErrorMessageFields: string[]
+  businessValidator: ((data: any) => boolean) | undefined;
+  businessErrorMessageFields: string[];
   constructor(
     response: AxiosResponse,
     options?: {
-      statusValidator?: (status: number) => boolean,
-      businessValidator?: (data:any) => boolean,
-      businessErrorMessageFields?: string[]
+      statusValidator?: (status: number) => boolean;
+      businessValidator?: (data: any) => boolean;
+      businessErrorMessageFields?: string[];
     }
   ) {
     this.response = response;
     this.statusValidator = options?.statusValidator;
     this.businessValidator = options?.businessValidator;
-    this.businessErrorMessageFields = options?.businessErrorMessageFields
-    || ['msg', 'errmsg', 'message']
+    this.businessErrorMessageFields = options?.businessErrorMessageFields || [
+      "msg",
+      "errmsg",
+      "message",
+    ];
   }
   get status() {
     return this.response.status;
@@ -184,7 +225,7 @@ class ResHandler {
 
   // 校验返回的数据中的业务内容。默认不对业务数据做处理
   validateBusiness() {
-    let result = true
+    let result = true;
     if (this.businessValidator) {
       result = Boolean(this.businessValidator(this.response.data));
     }
@@ -194,7 +235,7 @@ class ResHandler {
   resolve(): [AxiosResponse | null, HttpRequestError | null] {
     let result = [this.response, null] as [
       AxiosResponse | null,
-        HttpRequestError | null
+      HttpRequestError | null
     ];
     const config = this.response.config as AxiosRequestConfigExtend;
     // 这个时候是status错误
@@ -209,12 +250,12 @@ class ResHandler {
     }
     // 开始校验业务错误
     if (!Boolean(config.ignoreBusinessValidate) && !this.validateBusiness()) {
-      let message = '请求出错'
-      for(const field of this.businessErrorMessageFields){
-        const messageGet = this.response.data[field]
-        if(messageGet){
-          message = messageGet
-          break
+      let message = "请求出错";
+      for (const field of this.businessErrorMessageFields) {
+        const messageGet = this.response.data[field];
+        if (messageGet) {
+          message = messageGet;
+          break;
         }
       }
       const err = new HttpRequestError({
@@ -223,7 +264,7 @@ class ResHandler {
         response: this.response,
       });
       result = [null, err];
-      return result
+      return result;
     }
     return result;
   }
@@ -238,46 +279,52 @@ export class HttpRequestError extends Error {
    * request: 请求发起阶段，比如网络异常，浏览器阻止等
    * response: 请求响应阶段，比如超时、用户中断，服务器无响应，或服务器直接断开链接无数据等
    * afterSuccess: 自定义的业务错误，比如http状态码错误，或者其他业务错误
+   * callback: 在请求前置和后置函数中发生的错误
    */
-  type: 'request' | 'response' | 'afterSuccess';
+  type: "request" | "response" | "afterSuccess" | "callback";
   requestUrl: string;
-  #config: InternalAxiosRequestConfig & AxiosRequestConfigExtend;
+  #config: (InternalAxiosRequestConfig & AxiosRequestConfigExtend) | undefined;
   #response: AxiosResponse | undefined;
   #request: any | undefined;
-  constructor(error: any) {
+  // error一般是axios的error错误，也有可能是callback的普通错误
+  constructor(error: any, urlInput: string = "") {
     super(error.message);
     this.#config = error.config;
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      this.type = 'afterSuccess';
-      this.#response = error.response;
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
-      this.type = 'response';
+    if (!error.isCallbackError) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        this.type = "afterSuccess";
+        this.#response = error.response;
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        this.type = "response";
+      } else {
+        this.#request = error.request;
+        // Something happened in setting up the request that triggered an Error
+        this.type = "request";
+      }
     } else {
-      this.#request = error.request;
-      // Something happened in setting up the request that triggered an Error
-      this.type = 'request';
+      this.type = "callback";
     }
     // 记录请求路径
     const { baseURL, url, params } = this.#config;
-    const urlFromConfig = (baseURL || '') + (url || '');
+    const urlFromConfig = (baseURL || "") + (url || "");
     // const paramsStringFromConfig = new URLSearchParams(params).toString();
     // 换一种写法，URLSearchParams在uni-app中不支持
-    let paramsStringFromConfig = '';
+    let paramsStringFromConfig = "";
     if (params) {
       const keys = Object.keys(params);
       paramsStringFromConfig = keys
         .map((key) => `${key}=${params[key]}`)
-        .join('&');
+        .join("&");
     }
     this.requestUrl =
-      urlFromConfig +
-      (paramsStringFromConfig ? `?${paramsStringFromConfig}` : '');
+      (urlFromConfig || urlInput) +
+      (paramsStringFromConfig ? `?${paramsStringFromConfig}` : "");
   }
-  get config(): InternalAxiosRequestConfig & AxiosRequestConfigExtend{
+  get config(): InternalAxiosRequestConfig & AxiosRequestConfigExtend {
     return this.#config;
   }
   get response(): AxiosResponse | undefined {
@@ -291,13 +338,13 @@ export class HttpRequestError extends Error {
    * @returns
    */
   get isAfterSuccess() {
-    return this.type === 'afterSuccess';
+    return this.type === "afterSuccess";
   }
   get isAbort() {
-    const keywords = ['abort', 'cancel'];
+    const keywords = ["abort", "cancel"];
     return keywords.some((keyword) => this.message.includes(keyword));
   }
   get isTimeout() {
-    return this.message.includes('timeout');
+    return this.message.includes("timeout");
   }
 }
