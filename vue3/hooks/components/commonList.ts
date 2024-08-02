@@ -8,9 +8,18 @@ type ListPagination = {
   // 当前页数
   current: number,
   // 列表总数
-  total?: number
-} & Record<string, any>
+  total: number
+  // el-pagination预设支持
+  layout: string,
+  sizes: number[]
+}
 
+type UseCommonListPaginationDefine = {
+  size?: number,
+  layout?: string,
+  current?: number,
+  sizes?: number[]
+}
 
 export interface changeQueryOptions {
   // 去抖
@@ -45,7 +54,7 @@ export type UseCommonListOptions<RowType = any> = {
   // 更新列表的方法
   fetchFunc?: (params?: FetchFuncParams<RowType>) => Promise<FetchFuncResult<RowType> | FetchFuncResultTuple<RowType> >,
   // 初始的分页参数定义
-  pagination?: ListPagination,
+  pagination?: UseCommonListPaginationDefine,
   // 当前行数据Key,默认为id
   rowIdKey?: string,
   // 使用concat模式，实现瀑布流加载

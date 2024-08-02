@@ -157,7 +157,7 @@ import {
   onMounted,
   computed,
 } from "vue";
-import { ElPagination, ElTable, ElTableColumn, ElTooltip } from "element-plus";
+import { ElPagination, ElTable, ElTableColumn, ElTooltip, ElButton, vLoading } from "element-plus";
 const TableConfiguration = defineAsyncComponent(
   () => import("./tableConfiguration.vue")
 );

@@ -9,6 +9,26 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@hykj-js/vue3-element-plus": "workspace:^"
+    "@element-plus/icons-vue": "^2.3.1",
+    "@hykj-js/shared": "workspace:^",
+    "@hykj-js/vue3-element-plus": "workspace:^",
+    "@hykj-js/vue3-hooks": "workspace:^",
+    "dayjs": "^1.11.10",
+    "element-plus": "^2.4.3",
+    "pinia": "^2.2.0",
+    "vue": "^3.4.21",
+    "vue-router": "^4.4.2"
+  },
+  "devDependencies": {
+    "@iconify/json": "^2.2.233",
+    "@iconify/tailwind": "^1.1.2",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.40",
+    "sass": "^1.72.0",
+    "tailwindcss": "^3.4.7",
+    "unplugin-auto-import": "^0.18.2",
+    "unplugin-icons": "^0.19.1",
+    "unplugin-vue-components": "^0.27.3",
+    "vite-plugin-vue-devtools": "^7.3.7"
   }
 }

@@ -14,7 +14,7 @@
         <template #item.isHide="{ row }">
           <el-switch
             :model-value="!row.hide"
-            @change="changeRow(row, $event)"
+            @change="changeRow(row, $event as boolean)"
             :disabled="row.disabledHide"
           >
           </el-switch>
@@ -26,6 +26,7 @@
 
 <script setup lang="ts">
 import {  ref ,defineAsyncComponent} from "vue";
+import { ElSwitch, ElDrawer } from "element-plus";
 const baseTable = defineAsyncComponent(() => import('./table.vue'));
 
 const drawer = ref(false);

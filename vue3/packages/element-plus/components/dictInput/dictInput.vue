@@ -69,7 +69,7 @@
 import {computed, onBeforeUnmount, onMounted, reactive, watch} from "vue";
 import {DictObj, getDictData} from "@hykj-js/vue3-hooks";
 import {safeJSONParse} from "@hykj-js/shared";
-import {ElSelect, ElOption, ElRadio, ElTreeSelect} from "element-plus";
+import {ElSelect, ElOption, ElRadio, ElTreeSelect, vLoading} from "element-plus";
 
 type Props = {
   teleported?: boolean,

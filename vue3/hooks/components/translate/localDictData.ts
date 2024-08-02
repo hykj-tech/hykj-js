@@ -14,8 +14,12 @@ export const localDictData = reactive<Record<string, DictObj[]>>({
   ],
 });
 
+interface ExtendedDictObj extends Omit<DictObj, 'text'> {
+  text?: string;
+}
+
 // 本地字典扩展，根据字典的value定位对对应的字典项进行数据扩展（覆盖）
-export const dictDataExtend = reactive<Record<string, Omit<DictObj, 'text'>[]>>({
+export const dictDataExtend = reactive<Record<string, ExtendedDictObj[]>>({
 });
 
 // 外部注册本地字典数据
@@ -26,7 +30,7 @@ export function registerLocalDictData(dictKey: string, dictData: DictObj[]) {
 }
 
 // 外部注册本地字典扩展
-export function registerLocalDictDataExtend(dictKey: string, dictData: Omit<DictObj, 'text'>[]) {
+export function registerLocalDictDataExtend(dictKey: string, dictData: ExtendedDictObj[]) {
   dictDataExtend[dictKey] = dictData;
 }
 
