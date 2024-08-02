@@ -116,14 +116,15 @@ import {
   useList,
   DictInput,
 } from '@hykj-js/vue3-element-plus'
-import { useCommonToggle } from '@hykj-js/vue3-hooks'
+import { FetchFuncParams, useCommonToggle } from '@hykj-js/vue3-hooks'
 import { delay } from '@hykj-js/shared'
 import { query, 人, 假数据库 } from '@/utils/mockData'
+import { BaseTableColumn } from '@hykj-js/vue3-element-plus/dist/components/baseTable/type'
 
 // 测试commonToggle
 const { value: visible, toggle } = useCommonToggle()
 // 测试commonList
-const columns = reactive([
+const columns: BaseTableColumn[] = [
   {
     label: '姓名',
     prop: 'name',
@@ -149,7 +150,7 @@ const columns = reactive([
     fixed: 'right',
     width: '200px',
   },
-])
+]
 
 const {
   state: userListState,
@@ -160,7 +161,7 @@ const {
   deleteRow,
 } = useList<人>({
   query,
-  fetchFunc: async (params) => {
+  fetchFunc: async (params: FetchFuncParams) => {
     logger.log('fetchFunc运行:', params, query, pagination)
     await delay(200)
     const result = await 假数据库.search(query, pagination)

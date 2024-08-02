@@ -83,17 +83,29 @@ type Props = {
   placeholder?: string,
   size?: "" | "small" | "default" | "large",
   styleDisplay?: boolean,
-  // element组件的其他属性
+  /**
+   * element组件的其他属性
+   */
   options?: Record<string, any>,
-  // groupKey自定义分组，用于级联数据, 格式 dictData => Boolean, 其中dictData为遍历的字典数据项
+  /**
+   * groupKey自定义分组，用于级联数据, 格式 dictData => Boolean, 其中dictData为遍历的字典数据项
+   */
   groupKeyFilter?: (dictData: DictObj) => boolean,
-  // 树形选择配置
+  /**
+   * 树形选择配置
+   */
   treeOptions?: Record<string, any>,
-  // 是否可搜索，只针对select
+  /**
+   * 是否可搜索，只针对select
+   */
   filterable?: boolean,
-  // 禁用loading
+  /**
+   * 禁用loading
+   */
   disableLoading?: boolean,
-  // 用于tree-select
+  /**
+   * 用于tree-select
+   */
   cacheData?: DictObj[]
 }
 // 固定的labelKey和valueKey

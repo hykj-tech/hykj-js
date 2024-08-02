@@ -577,6 +577,7 @@ watch(() => state.fileList, async () => {
 })
 // 供外部使用的函数方法
 defineExpose({
+  // TODO: 完善这里的文档注释
   cancelAllUpload,
   chooseFile,
   inputFiles,
