@@ -8,3 +8,4 @@ export const BaseTable = withInstall(CP)
 export default BaseTable
 
 export * from '.'
+export * from './type'

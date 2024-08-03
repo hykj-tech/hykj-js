@@ -116,7 +116,7 @@ export type BaseTableProps = {
 /**
  * 表格列的基本渲染定义
  */
-export type BaseTableColumn<RowType = Record<string, any>> = {
+export type BaseTableColumn<RowType = any> = {
   /**
    * 列的字段名
    */

@@ -115,11 +115,11 @@ import {
   BaseTable,
   useList,
   DictInput,
+  BaseTableColumn,
 } from '@hykj-js/vue3-element-plus'
 import { FetchFuncParams, useCommonToggle } from '@hykj-js/vue3-hooks'
 import { delay } from '@hykj-js/shared'
 import { query, 人, 假数据库 } from '@/utils/mockData'
-import { BaseTableColumn } from '@hykj-js/vue3-element-plus/dist/components/baseTable/type'
 
 // 测试commonToggle
 const { value: visible, toggle } = useCommonToggle()
