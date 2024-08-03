@@ -1,14 +1,17 @@
 /**
- * 组件状态
+ * BaseTable组件内部状态
  */
-export type BaseTableSate ={
+export type BaseTableSate<RowType = any> ={
   tableHeight: number;
   internalSelection: [];
   showTableConfiguration: boolean
-  internalColumns: BaseTableColumn[]
+  internalColumns: BaseTableColumn<RowType>[]
   delayMounted:boolean
 }
 
+/**
+ * BaseTable分页参数对象
+ */
 export type BaseTablePagination = {
   sizes?: number[];
   layout?: string;
@@ -17,6 +20,9 @@ export type BaseTablePagination = {
   size?: number;
 }
 
+/**
+ * BaseTable组件属性
+ */
 export type BaseTableProps = {
   /**
    * 是否使用teleported

@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 
 import Icons from "unplugin-icons/vite";
 import VueDevTools from "vite-plugin-vue-devtools";
-import autoImport from "unplugin-auto-import/vite";
+import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
@@ -19,7 +19,7 @@ export default defineConfig(({ mode, command }) => {
       // vue devtools
       VueDevTools(),
       // auto import
-      autoImport({
+      AutoImport({
         imports: ["vue", "vue-router", "pinia"],
         resolvers: [ElementPlusResolver()],
         dts: "src/auto-imports.d.ts",

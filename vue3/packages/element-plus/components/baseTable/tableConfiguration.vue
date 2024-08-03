@@ -31,10 +31,10 @@ const baseTable = defineAsyncComponent(() => import('./table.vue'));
 
 const drawer = ref(false);
 const direction = "rtl";
-const tableColumns = ref([
+const tableColumns = [
   { prop: "label", label: "列名" },
   { prop: "isHide", label: "显示" },
-]);
+];
 
 // 开关drawer
 const toggle = (value?: boolean) => {
@@ -53,7 +53,7 @@ defineExpose({
 });
 // 定义props的类型
 const props = defineProps<{
-  columnsData: Array<[]>;
+  columnsData: any[];
 }>();
 </script>
 <style scoped lang="scss">

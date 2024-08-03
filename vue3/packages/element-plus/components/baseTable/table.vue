@@ -141,7 +141,7 @@
 
 <script lang="ts" setup>
 import { Refresh, Operation } from "@element-plus/icons-vue";
-import {
+import type {
   BaseTableSate,
   BaseTableProps,
   styleType,
@@ -162,6 +162,8 @@ const TableConfiguration = defineAsyncComponent(
   () => import("./tableConfiguration.vue")
 );
 
+type Props = BaseTableProps;
+
 // 组件的状态
 const state = reactive<BaseTableSate>({
   // 自动高度
@@ -174,7 +176,7 @@ const state = reactive<BaseTableSate>({
   delayMounted: false,
 });
 
-const props = withDefaults(defineProps<BaseTableProps>(), {
+const props = withDefaults(defineProps<Props>(), {
   teleported: false,
   hightCurrentRow: false,
   useTableTool: false,
