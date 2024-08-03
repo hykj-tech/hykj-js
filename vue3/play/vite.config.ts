@@ -37,10 +37,10 @@ export default defineConfig(({ mode, command }) => {
           find: "@",
           replacement: fileURLToPath(new URL("./src", import.meta.url)),
         },
-        // {
-        //   find: '@hykj-js/vue3-element-plus',
-        //   replacement: fileURLToPath(new URL("../packages/element-plus/index.ts", import.meta.url)),
-        // },
+        {
+          find: '@hykj-js/vue3-element-plus',
+          replacement: fileURLToPath(new URL("../packages/element-plus/index.ts", import.meta.url)),
+        },
       ],
     },
     server: {

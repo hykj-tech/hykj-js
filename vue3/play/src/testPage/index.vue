@@ -163,6 +163,8 @@ const {
   query,
   fetchFunc: async (params: FetchFuncParams) => {
     logger.log('fetchFunc运行:', params, query, pagination)
+    console.log('params.pagination.current:',params.pagination.current)
+    console.log('pagination.current:',pagination.current)
     await delay(200)
     const result = await 假数据库.search(query, pagination)
     return {

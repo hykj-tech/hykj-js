@@ -10,10 +10,15 @@ declare module 'vue' {
     ConcatList: typeof import('./components/concatList.vue')['default']
     DictInputTest: typeof import('./components/dictInput-test.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElImage: typeof import('element-plus/es')['ElImage']
     ElInput: typeof import('element-plus/es')['ElInput']
+    ElProgress: typeof import('element-plus/es')['ElProgress']
     ElTag: typeof import('element-plus/es')['ElTag']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchAndReloadBtn: typeof import('./components/searchAndReloadBtn.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

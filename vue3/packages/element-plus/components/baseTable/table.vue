@@ -120,8 +120,6 @@
       <el-pagination
         background
         :teleported="useTeleported"
-        @size-change="$emit('size-change', $event)"
-        @current-change="$emit('current-change', $event)"
         v-model:current-page="internalPagination.current"
         v-model:page-size="internalPagination.size"
         :page-sizes="internalPagination.sizes"
@@ -157,7 +155,14 @@ import {
   onMounted,
   computed,
 } from "vue";
-import { ElPagination, ElTable, ElTableColumn, ElTooltip, ElButton, vLoading } from "element-plus";
+import {
+  ElPagination,
+  ElTable,
+  ElTableColumn,
+  ElTooltip,
+  ElButton,
+  vLoading,
+} from "element-plus";
 const TableConfiguration = defineAsyncComponent(
   () => import("./tableConfiguration.vue")
 );
@@ -224,9 +229,17 @@ watch(
 watch(
   () => [internalPagination.current, internalPagination.size],
   (newVal) => {
-    // 直接修改props中的pagination对象属性
-    props.pagination.current = internalPagination.current;
-    props.pagination.size = internalPagination.size;
+    const isCurrentChange = newVal[0] !== props.pagination.current;
+    const isSizeChange = newVal[1] !== props.pagination.size;
+    // 直接修改props中的pagination对象属性，随后才更新事件
+    if (isCurrentChange) {
+      props.pagination.current = internalPagination.current;
+      emit("current-change", internalPagination.current);
+    }
+    if (isSizeChange) {
+      props.pagination.size = internalPagination.size;
+      emit("size-change", internalPagination.size);
+    }
   }
 );
 
