@@ -199,7 +199,6 @@ async function doLoadingConfirm() {
   ).catch(()=>{})
   logger.log('loadingConfirm结果：', result)
 }
-
 // fetchData测试
 async function testFetchData() {
 

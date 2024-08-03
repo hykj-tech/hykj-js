@@ -30,12 +30,8 @@
       "@/*": [
         "src/*"
       ],
-      // "@hykj-js/vue3-element-plus": [
-      //   "../packages/element-plus/index.ts"
-      // ],
     },
     "types": [
-      "element-plus/global",
       "unplugin-icons/types/vue"
     ],
   },
