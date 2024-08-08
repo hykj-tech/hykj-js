@@ -243,9 +243,9 @@ const _value = computed({
     return internalState.value?.toString() || ''
   },
   set(v) {
-    let value: string | string[] = v?.toString()
+    let value: string | string[] = v?.toString() || ''
     if(props.multiple){
-      value = (v as string[]).map(i => i?.toString())
+      value = (v as string[]).map(i => i?.toString()) || []
     }
     internalState.value = value as any
     emit('update:modelValue', value)
