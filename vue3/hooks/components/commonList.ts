@@ -6,7 +6,6 @@ import {
   ref,
   toRaw,
 } from "vue-demi";
-import { useDebounceFn } from "@vueuse/core";
 import { structuredClone } from "@hykj-js/shared";
 
 /**
@@ -63,8 +62,8 @@ export type FetchFuncResult<RowType = any> = {
  * 列表函数返回Tuple模式
  */
 export type FetchFuncResultTuple<RowType = any> =
-  | [RowType[], number]
-  | [RowType[], number, any];
+  | Readonly<[RowType[], number]>
+  | Readonly<[RowType[], number, any]>;
 
 /**
  * 列表方法会携带的参数，
@@ -210,10 +209,11 @@ export const useCommonList = <RowType>(
         let s;
         let e;
         if (fetchFuncResult instanceof Array && fetchFuncResult.length >= 2) {
-          s = fetchFuncResult as FetchFuncResultTuple<RowType>;
-          l = fetchFuncResult[0] || [];
-          t = fetchFuncResult[1] || 0;
-          e = fetchFuncResult[2] || null;
+          const r = fetchFuncResult;
+          s = [r[0], r[1], r[2]] as FetchFuncResultTuple<RowType>;
+          l = s[0] || [];
+          t = s[1] || 0;
+          e = s[2] || null;
         } else {
           s = fetchFuncResult as FetchFuncResult<RowType>;
           l = s.list || [];
@@ -311,11 +311,11 @@ export const useCommonList = <RowType>(
   /**
    * 重置页面（重置搜索条件并清空列表（可选）重新加载）
    */
-  async function resetPage(options?: { 
+  async function resetPage(options?: {
     /**
      * 是否清空列表后加载
      */
-    clearList?: boolean 
+    clearList?: boolean;
   }) {
     if (options?.clearList) {
       state.list = [];
