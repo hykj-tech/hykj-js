@@ -9,12 +9,21 @@ export interface CommonJson {
     | CommonJson[];
 }
 
-// 随机来一个测试方法
+/**
+ * 生成随机数
+ * @param min 
+ * @param max 
+ * @returns 
+ */
 export function randomNum(min: number = 0, max: number = 100) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-// 随机字符串
+/**
+ * 随机字符串
+ * @param len 
+ * @returns 
+ */
 export function randomString(len: number = 32) {
   const $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz12345678';
   const maxPos = $chars.length;
@@ -27,6 +36,11 @@ export function randomString(len: number = 32) {
 
 import qs from 'qs'
 
+/**
+ * qs.stringify的封装
+ * @param params 
+ * @returns 
+ */
 export const queryStringBuilder = (params: any) => {
   return  '?' + qs.stringify(params);
 }
@@ -48,7 +62,7 @@ export function findInTree<obj>(
     if (fn(item)) {
       return item;
     }
-    const childKey = options?.children || 'childList';
+    const childKey = options?.children || 'children';
     if (item[childKey]) {
       const result = findInTree(item[childKey] as obj[], fn, options);
       if (result) {
@@ -59,7 +73,11 @@ export function findInTree<obj>(
   return null;
 }
 
-// setTimeoutPromise封装
+/**
+ * setTimeoutPromise封装
+ * @param ms 
+ * @returns 
+ */ 
 export async function delay(ms = 1000) {
   return new Promise<void>((resolve) => {
     setTimeout(() => {
@@ -68,7 +86,12 @@ export async function delay(ms = 1000) {
   });
 }
 
-// 将任意的字符串或数字转换为最多保留N位小数点位置
+/**
+ * 将任意的字符串或数字转换为最多保留N位小数点位置，返回number类型
+ * @param value 
+ * @param maxDecimal 
+ * @returns 
+ */ 
 export function anyToFlexFixedNumber(value: any, maxDecimal: number = 0) {
   // 校验value是不是数字
   const numberValue = Number(value);
@@ -79,7 +102,13 @@ export function anyToFlexFixedNumber(value: any, maxDecimal: number = 0) {
   // 去掉小数点后多余的0
   return Number(toFixedValue);
 }
-// 给任意长度的字符串添加mask
+
+/**
+ * 给任意长度的字符串添加mask
+ * @param str 
+ * @param options 
+ * @returns 
+ */
 export function maskString(str: string, options?: {len?: number, start?: number}) {
   const strLen = str.length;
   // mask长度默认为字符串的一半
@@ -107,8 +136,15 @@ export function maskString(str: string, options?: {len?: number, start?: number}
 }
 
 import {cloneDeep} from 'lodash-es';
-// structureClone的polyfill,如果globalThis不存在，使用lodash-es的cloneDeep
+
+/**
+ * structureClone的polyfill,如果globalThis不存在，使用lodash-es的cloneDeep
+ */
 export const structuredClone = globalThis?.structuredClone || cloneDeep;
+
+/**
+ * 加载structuredClone的polyfill
+ */
 export const polyfillStructuredClone = () => {
   if (globalThis && !globalThis.structuredClone){
     globalThis.structuredClone = cloneDeep;
