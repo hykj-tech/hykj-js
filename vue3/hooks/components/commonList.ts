@@ -287,26 +287,6 @@ export const useCommonList = <RowType>(
   }
 
   /**
-   * 搜索发生变化
-   * @param {ChangeQueryOptions} [options] 可选功能参数
-   * @returns {Promise<void>}
-   */
-  async function changeQuery(options?: ChangeQueryOptions) {
-    // 可选去抖
-    if (options?.debounce) {
-      const debounceTime = Number(options?.debounce) || 500;
-      const debounceFn = useDebounceFn(async () => {
-        resetPagination();
-        await loadData({ resetConcat: true });
-      }, debounceTime);
-      await debounceFn();
-      return;
-    }
-    resetPagination();
-    await loadData({ resetConcat: true });
-  }
-
-  /**
    * 重置搜索条件
    */
   function resetQuery() {
@@ -316,8 +296,6 @@ export const useCommonList = <RowType>(
         options.query[key] = defaultQuery[key];
       });
     }
-    pagination.current = 1;
-    pagination.total = 0;
   }
 
   /**
@@ -331,11 +309,19 @@ export const useCommonList = <RowType>(
   }
 
   /**
-   * 重置页面（重置搜索条件并清空列表重新加载）
+   * 重置页面（重置搜索条件并清空列表（可选）重新加载）
    */
-  async function resetPage() {
-    state.list = [];
+  async function resetPage(options?: { 
+    /**
+     * 是否清空列表后加载
+     */
+    clearList?: boolean 
+  }) {
+    if (options?.clearList) {
+      state.list = [];
+    }
     resetQuery();
+    resetPagination();
     await loadData({ resetConcat: true });
   }
 
@@ -377,17 +363,11 @@ export const useCommonList = <RowType>(
      */
     loadNextPage,
     /**
-     * 搜索发生变化, 通常用于统一绑定到搜索框输入的change事件，支持去斗功能
-     * @param {ChangeQueryOptions} [options] 可选功能参数
-     * @returns {Promise<void>}
-     */
-    changeQuery,
-    /**
-     * 重置搜索条件,包含重置query和分页，这个函数不经常使用
+     * 重置搜索条件，建议在“重置”按钮使用，并全局监听query变化使用去斗的resetPaginationAndLoad
      */
     resetQuery,
     /**
-     * 包含清空列表，重置query（通常用于列表页面重置）
+     * 包含清空列表（可选），重置query，重置分页，加载页面
      */
     resetPage,
     /**
