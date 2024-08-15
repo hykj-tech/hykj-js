@@ -123,3 +123,32 @@ export const safeJSONParse = (str: string) => {
     return null;
   }
 }
+
+
+
+type AnyObject = Record<any, unknown>
+
+/**
+ * Object.assign() with pick， 只会挑选target中的字段进行覆盖
+ * 返回的是target本身
+ * @param target 
+ * @param sources 
+ * @returns 
+ */
+export function objectAssignByPick(target: AnyObject, ...sources: AnyObject[]): AnyObject {
+  if (sources.length === 0) {
+    return target;
+  }
+
+  const [currentSource, ...remainingSources] = sources;
+
+  const keys = Object.keys(target);
+
+  keys.forEach(key => {
+    if (key in currentSource) {
+      target[key] = currentSource[key];
+    }
+  });
+
+  return objectAssignByPick(target, ...remainingSources);
+}
