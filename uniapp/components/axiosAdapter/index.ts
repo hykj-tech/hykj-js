@@ -59,12 +59,15 @@ export const uniappAxiosAdapter = (config: AxiosRequestConfigExtend) => {
     // 手动停止的处理
     let onCanceled: any;
     const done = () => {
-      if (config.signal && config.signal instanceof AbortSignal) {
+      // if (config.signal && config.signal instanceof AbortSignal) {
+      // 避免AbortSignal类在真机的兼容问题
+      if (config.signal && config.signal.removeEventListener instanceof Function) {
         config.signal.removeEventListener('abort', onCanceled);
       }
     };
     // config.signal处理
-    if (config.signal && config.signal instanceof AbortSignal) {
+    // if (config.signal && config.signal instanceof AbortSignal) {
+    if (config.signal && config.signal.addEventListener instanceof Function) {
       onCanceled = () => {
         if (!uniRequestTask) {
           return;
