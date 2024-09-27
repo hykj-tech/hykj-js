@@ -117,7 +117,7 @@ import {
   DictInput,
   BaseTableColumn,
 } from '@hykj-js/vue3-element-plus'
-import { FetchFuncParams, useCommonToggle } from '@hykj-js/vue3-hooks'
+import { ensureDictData, FetchFuncParams, getDictData, useCommonToggle } from '@hykj-js/vue3-hooks'
 import { delay } from '@hykj-js/shared'
 import { query, 人, 假数据库 } from '@/utils/mockData'
 
@@ -186,6 +186,11 @@ onMounted(async () => {
   // await ensureDictData(['sys_user_sex'])
   await loadData()
   await testFetchData()
+  // 上面的baseTable中已经触发了远程字典的updateDictData
+  // 测试同时在此请求test_remote_dict_key字典,202409添加并行等待
+  await ensureDictData(['test_remote_dict_key'])
+  // 如果能正常打印出结果，表示并行updateDictData成功
+  console.log('并行updateDictData测试：', getDictData('test_remote_dict_key'))
 })
 
 async function doLoadingConfirm() {

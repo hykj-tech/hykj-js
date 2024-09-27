@@ -1,3 +1,4 @@
+import { delay } from '@hykj-js/shared'
 import {
   registerLocalDictData,
   registerTranslateDefine,
@@ -62,6 +63,9 @@ export function 定义翻译数据() {
   registerTranslateDefine({
     match: dictKey => dictKey === 'test_remote_dict_key' ,
     getData: async _dictKey => {
+      console.time('模拟远程字典请求')
+      await delay(1000)
+      console.timeEnd('模拟远程字典请求')
       return [
         { dictLabel: '测试远程字典1', dictValue: '0' },
         { dictLabel: '测试远程字典2', dictValue: '1' },

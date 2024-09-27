@@ -49,6 +49,11 @@ export type FormatKeyMap = {
 const loadingStatusMap: Record<string, boolean | string> = {};
 
 /**
+ * 多次updateDictData的排队
+ */
+const waitingPromiseCtxMap: Record<string, ((value: any)=> void)[]> = {};
+
+/**
  * 全局响应式数据储存
  */
 export const globalDictDataStore = reactive({
@@ -71,7 +76,15 @@ export async function updateDictData(
     // 除非指定强制更新，否则不更新已经存在的字典
     let needFetch = !!options?.forceUpdate;
     if (needFetch || !dictNow) {
-      if (loadingStatusMap[dictKey]) return;
+      if (loadingStatusMap[dictKey] === true) {
+        // 如果已经在加载中，等待加载完成
+        return new Promise((resolve) => {
+          if(!waitingPromiseCtxMap[dictKey]){
+            waitingPromiseCtxMap[dictKey] = [];
+          }
+          waitingPromiseCtxMap[dictKey].push(resolve);
+        });
+      }
       loadingStatusMap[dictKey] = true;
       // 获取字典数据
       const translateDefine = translateDefineList.find(i => i.match(dictKey));
@@ -117,11 +130,21 @@ export async function updateDictData(
     }
     // 标记该字典本次加载已经完成，整个生命周期中不再重新更新
     loadingStatusMap[dictKey] = 'loaded';
+    resolveWaitingPromise(dictKey);
   } catch (err) {
     // 一旦失败，允许下次字典更新的时候重新请求
     // 注意这里很容易会出现循环调用溢出，出错若不为请求问题，需要排查try内的代码是否正常
     loadingStatusMap[dictKey] = false;
     console.log(`updateDictData失败(dictKey:${dictKey})：`, err);
+    resolveWaitingPromise(dictKey);
+  }
+}
+
+// 完成等待中的promise
+function resolveWaitingPromise(dictKey: string){
+  if(waitingPromiseCtxMap[dictKey]){
+    waitingPromiseCtxMap[dictKey].forEach(resolve => resolve(true));
+    waitingPromiseCtxMap[dictKey] = [];
   }
 }
 
