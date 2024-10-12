@@ -7,6 +7,7 @@ export type BeforeNormalUploadPayload = {
   formData:FormData;
   url: string;
   additionalHeader: Record<string, string>;
+  userContext: UploadAnyUserContext | null;
 }
 
 /**

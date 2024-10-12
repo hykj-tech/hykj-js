@@ -381,6 +381,8 @@ async function normalUpload(file: UploadAnyFile) {
       method: 'post',
       url: '',
       additionalHeader: {},
+      // 传入用户自定义上下文，供beforeUploadPayload使用
+      userContext: props.userContext || null,
     }
     // 调用全局beforeUpload
     const funcList = onBeforeNormalUploadFuncList
@@ -577,7 +579,6 @@ watch(() => state.fileList, async () => {
 })
 // 供外部使用的函数方法
 defineExpose({
-  // TODO: 完善这里的文档注释
   cancelAllUpload,
   chooseFile,
   inputFiles,
@@ -771,6 +772,7 @@ defineExpose({
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         line-height: 18px;
       }
 

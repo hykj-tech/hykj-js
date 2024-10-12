@@ -60,9 +60,20 @@ export type UploadAnyProps = {
   disabled?: boolean;
   // 独立模式，不使用文件列表显示，只使用本组件的上传逻辑
   standalone?: boolean;
-  // 储存桶命名
-  bucketModuleName?: string;
+  // 储存桶命名,过于耦合业务，废弃，改用userContext自定义
+  // bucketModuleName?: string;
   // 自定义beforeNormalUpload
   beforeNormalUpload?: (payload: BeforeNormalUploadPayload) => Promise<void>;
+  // 用户自定义上下文
+  userContext?: UploadAnyUserContext;
+}
+
+/**
+ * 用户自定义文件上传上下文，主要用于组件中定义，而在统一的上传前钩子函数中使用
+ */
+declare global{
+  interface UploadAnyUserContext {
+    [key: string]: any;
+  }
 }
 
