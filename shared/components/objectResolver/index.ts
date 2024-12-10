@@ -48,7 +48,7 @@ export class ObjectResolver<ObjectType> {
     if (unresolvedIds.length > 0) {
       console.warn(`ObjectResolver: can't resolve objects with ids: ${unresolvedIds.join(',')}`);
     }
-    return objects.map(item => item.obj);
+    return objects.map(item => item.obj).filter(obj => obj !== null) as ObjectType[];
   }
   /**
    * 创建解析器
