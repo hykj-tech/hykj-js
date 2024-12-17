@@ -1,4 +1,4 @@
-import {ElMessageBox} from "element-plus";
+import {ElMessageBox, ElMessageBoxOptions} from "element-plus";
 
 type LoadingConfirmOptions = {
   // 标题
@@ -15,7 +15,7 @@ type LoadingConfirmOptions = {
   showCancelButton?: boolean,
     // 使用html渲染
   html?: boolean,
-}
+} & ElMessageBoxOptions
 
 type LoadingConfirmAsyncFn = (action: 'confirm' | 'cancel' | 'close') => Promise<void>;
 
@@ -31,6 +31,7 @@ export const loadingConfirm = (options : LoadingConfirmOptions, asyncFn:LoadingC
   const showCancelButton = options.showCancelButton === undefined ? true : options.showCancelButton;
   const dangerouslyUseHTMLString = options.html === undefined ? false : options.html;
   return ElMessageBox({
+    ...options,
     closeOnPressEscape: false,
     closeOnClickModal: false,
     title,
