@@ -1,7 +1,8 @@
-import type {FormatKeyMap, UpdateDictDataOptions} from './index';
+import type {DictObj, FormatKeyMap, Formatter, UpdateDictDataOptions} from './index';
 // 这个模块用于存储字典数据获取的定义
 export type TranslateDefine = {
-  formatKeyMap: FormatKeyMap;
+  formatKeyMap?: FormatKeyMap;
+  formatter?: Formatter;
   match: (dictKey?: string) => boolean;
   getData: (
     dictKey: string,

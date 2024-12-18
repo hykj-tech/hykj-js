@@ -72,10 +72,18 @@ export function 定义翻译数据() {
         { dictLabel: '测试远程字典3', dictValue: '2' },
       ]
     },
-    formatKeyMap: {
-      text: 'dictLabel',
-      value: 'dictValue',
-      sort: 'dictSort',
+    // formatKeyMap: {
+    //   text: 'dictLabel',
+    //   value: 'dictValue',
+    //   sort: 'dictSort',
+    // },
+    // 测试使用formatter
+    formatter: (data) => {
+        return {
+          text: data.dictLabel,
+          value: data.dictValue,
+          sort: data.dictSort,
+        }
     },
   })
 }

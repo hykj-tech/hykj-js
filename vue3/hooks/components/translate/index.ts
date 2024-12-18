@@ -46,6 +46,9 @@ export type FormatKeyMap = {
   otherProps?: string[];
 };
 
+// 字典格式化自定义方法
+export type Formatter = (data: any) => Partial<DictObj>;
+
 const loadingStatusMap: Record<string, boolean | string> = {};
 
 /**
@@ -97,7 +100,8 @@ export async function updateDictData(
       }
       const formatData = formatDictData(
         rawDictData,
-        translateDefine.formatKeyMap
+        translateDefine.formatKeyMap,
+        translateDefine.formatter
       );
       // 确保被访问过的dictKey不为空,
       // 这里这样处理是因为想实现统一调用字典数据相关方法后可以自动更新字典
@@ -240,8 +244,8 @@ export function useDictData(dictKey: string, options?: UpdateDictDataOptions) {
 }
 
 // 转换字典数据
-function formatDictData(data: any[], formatKeyMap: FormatKeyMap) {
-  const keyMap = formatKeyMap;
+function formatDictData(data: any[], formatKeyMap: FormatKeyMap, formatter: Formatter) {
+  const keyMap = formatKeyMap || {} as any;
   if (!keyMap.sort?.toString()) keyMap.sort = keyMap.value;
   if (!keyMap.style) keyMap.style = 'style';
   if (!keyMap.remark) keyMap.remark = 'remark';
@@ -249,19 +253,22 @@ function formatDictData(data: any[], formatKeyMap: FormatKeyMap) {
   const styleKey = keyMap.style || 'style';
   const remarkKey = keyMap.remark || 'remark';
   const childrenKey = keyMap.children || 'children';
-  const result = data.map(item => {
+  const formatterByDefault = (item: any)=> {
     const remark = item[remarkKey] || item.remark || '';
     const style = item[styleKey] || item.style || remark || '';
-    // 自定义转换
-    const formatObj: DictObj = {
+    return {
       value: item[keyMap.value],
       text: item[keyMap.text],
       sort: item[sortKey],
       remark,
       style,
-    };
+    } as DictObj;
+  }
+  const result = data.map(item => {
+    const formatObjByDefault = formatterByDefault(item);
+    const formatObj: DictObj = formatter ? {...formatObjByDefault, ...formatter(item)} : formatObjByDefault ;
     if (item[childrenKey]?.length) {
-      formatObj.children = formatDictData(item[childrenKey], keyMap);
+      formatObj.children = formatDictData(item[childrenKey], keyMap, formatter);
       formatObj.hasChildren = true;
     }
     if (keyMap.otherProps && keyMap.otherProps.length) {
