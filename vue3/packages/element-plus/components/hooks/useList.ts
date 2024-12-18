@@ -33,6 +33,7 @@ export function useList<RowType>(options: UseListOptions<RowType>){
         <span>数据</span><span style="color: red">${objName}</span><span>将被删除，是否继续？</span>
       `;
     await loadingConfirm({
+        type: 'warning',
         title: '删除确认',
         message,
         html:true,
