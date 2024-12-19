@@ -97,7 +97,6 @@
               ></slot>
               <!--          默认渲染-->
               <div
-                style="display: inline-block"
                 :class="{ textOverflow: column['show-overflow-tooltip'] }"
                 v-else
                 :style="({ ...columnStyles(column, scope.row) } as any)"
