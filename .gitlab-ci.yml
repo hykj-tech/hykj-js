@@ -18,7 +18,7 @@ default:
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest-9 --activate
-    - pnpm config set store-dir .pnpm-stor
+    - pnpm config set store-dir .pnpm-store
     - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
     - pnpm install --frozen-lockfile
 
