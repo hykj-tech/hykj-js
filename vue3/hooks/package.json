@@ -1,6 +1,6 @@
 {
   "name": "@hykj-js/vue3-hooks",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "vue3 common hook for hykj-js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,11 +20,11 @@
   },
   "dependencies": {
     "@hykj-js/shared": "workspace:^",
-    "@vueuse/core": "^10.7.1",
+    "@vueuse/core": "^12.3.0",
      "vue-demi": ">=0.14.8"
   },
   "peerDependencies": {
     "@hykj-js/shared": "workspace:^",
-    "@vueuse/core": "^10.7.1"
+    "@vueuse/core": "^12.3.0"
   }
 }
