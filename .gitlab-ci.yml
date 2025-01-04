@@ -21,6 +21,7 @@ default:
     - pnpm config set store-dir .pnpm-store
     - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
     - echo "git-checks=false" >> ~/.npmrc
+    - cat ~/.npmrc
     - pnpm install --frozen-lockfile
 
 variables:
