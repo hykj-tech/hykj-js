@@ -36,6 +36,7 @@ publish_shared:
   stage: publish
   script:
     - pnpm run build:shared
+    - git status
     - pnpm run publish:shared
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[shared\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -46,6 +47,7 @@ publish_uniapp:
   stage: publish
   script:
     - pnpm run build:uniapp
+    - git status
     - pnpm run publish:uniapp
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[uniapp\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -56,6 +58,7 @@ publish_vue3_hooks:
   stage: publish
   script:
     - pnpm run build:vue3-hooks
+    - git status
     - pnpm run publish:vue3-hooks
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[vue3-hooks\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -66,6 +69,7 @@ publish_vue3_element_plus:
   stage: publish
   script:
     - pnpm run build:vue3-element-plus
+    - git status
     - pnpm run publish:vue3-element-plus
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[vue3-element-plus\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
