@@ -20,6 +20,7 @@ default:
     - corepack prepare pnpm@latest-9 --activate
     - pnpm config set store-dir .pnpm-store
     - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+    - echo "git-checks=false" >> ~/.npmrc
     - pnpm install --frozen-lockfile
 
 variables:
@@ -37,7 +38,6 @@ publish_shared:
   script:
     - pnpm run build:shared
     - git status
-    - git diff package.json
     - pnpm run publish:shared
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[shared\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -49,7 +49,6 @@ publish_uniapp:
   script:
     - pnpm run build:uniapp
     - git status
-    - git diff package.json
     - pnpm run publish:uniapp
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[uniapp\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -61,7 +60,6 @@ publish_vue3_hooks:
   script:
     - pnpm run build:vue3-hooks
     - git status
-    - git diff package.json
     - pnpm run publish:vue3-hooks
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[vue3-hooks\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -73,7 +71,6 @@ publish_vue3_element_plus:
   script:
     - pnpm run build:vue3-element-plus
     - git status
-    - git diff package.json
     - pnpm run publish:vue3-element-plus
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[vue3-element-plus\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

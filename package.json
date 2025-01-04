@@ -33,5 +33,6 @@
   },
   "resolutions": {
     "vue-demi": "^0.14.10"
-  }
+  },
+  "packageManager": "pnpm"
 }
