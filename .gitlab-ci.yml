@@ -8,6 +8,12 @@ default:
   image:
     name: node:lts
     pull_policy: if-not-present
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
     
   before_script:
     - corepack enable
@@ -34,9 +40,7 @@ publish_shared:
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[shared\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_COMMIT_TAG =~ /shared/
-    - if: $CI_PIPELINE_SOURCE == "web"
-      variables:
-        PACKAGE: "shared"
+    - if: $CI_PIPELINE_SOURCE == "web" && $PACKAGE == "shared"
 
 publish_uniapp:
   stage: publish
@@ -46,9 +50,7 @@ publish_uniapp:
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[uniapp\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_COMMIT_TAG =~ /uniapp/
-    - if: $CI_PIPELINE_SOURCE == "web"
-      variables:
-        PACKAGE: "uniapp"
+    - if: $CI_PIPELINE_SOURCE == "web" && $PACKAGE == "uniapp"
 
 publish_vue3_hooks:
   stage: publish
@@ -58,9 +60,7 @@ publish_vue3_hooks:
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[vue3-hooks\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_COMMIT_TAG =~ /vue3-hooks/
-    - if: $CI_PIPELINE_SOURCE == "web"
-      variables:
-        PACKAGE: "vue3-hooks"
+    - if: $CI_PIPELINE_SOURCE == "web" && $PACKAGE == "vue3-hooks"
 
 publish_vue3_element_plus:
   stage: publish
@@ -70,6 +70,4 @@ publish_vue3_element_plus:
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /bump\[vue3-element-plus\]/ && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_COMMIT_TAG =~ /vue3-element-plus/
-    - if: $CI_PIPELINE_SOURCE == "web"
-      variables:
-        PACKAGE: "vue3-element-plus"
+    - if: $CI_PIPELINE_SOURCE == "web" && $PACKAGE == "vue3-element-plus"
