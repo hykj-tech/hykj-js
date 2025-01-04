@@ -1,0 +1,76 @@
+stages:
+  - publish
+
+default:
+  tags:
+    - executor-docker
+    - public
+  image:
+    name: node:lts
+    pull_policy: if-not-present
+    
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@latest-9 --activate
+    - pnpm config set store-dir .pnpm-stor
+    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+    - pnpm install --frozen-lockfile
+
+variables:
+  PACKAGE:
+    value: "shared"
+    description: "The package to publish"
+    options:
+      - "shared"
+      - "uniapp"
+      - "vue3-hooks"
+      - "vue3-element-plus"
+  
+
+publish_shared:
+  stage: publish
+  script:
+    - pnpm run build:shared
+    - pnpm run publish:shared
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /bump\[shared\]/ && $CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG =~ /shared/'
+    - when: manual
+      variables:
+        PACKAGE: "shared"
+
+publish_uniapp:
+  stage: publish
+  script:
+    - pnpm run build:uniapp
+    - pnpm run publish:uniapp
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /bump\[uniapp\]/ && $CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG =~ /uniapp/'
+    - when: manual
+      variables:
+        PACKAGE: "uniapp"
+
+publish_vue3_hooks:
+  stage: publish
+  script:
+    - pnpm run build:vue3-hooks
+    - pnpm run publish:vue3-hooks
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /bump\[vue3-hooks\]/ && $CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG =~ /vue3-hooks/'
+    - when: manual
+      variables:
+        PACKAGE: "vue3-hooks"
+
+publish_vue3_element_plus:
+  stage: publish
+  script:
+    - pnpm run build:vue3-element-plus
+    - pnpm run publish:vue3-element-plus
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /bump\[vue3-element-plus\]/ && $CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG =~ /vue3-element-plus/'
+    - when: manual
+      variables:
+        PACKAGE: "vue3-element-plus"
