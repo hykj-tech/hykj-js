@@ -185,6 +185,21 @@ const {
 onMounted(async () => {
   // await ensureDictData(['sys_user_sex'])
   await loadData()
+  // 测试loadData的默认截流功能
+  const testLoadDataOptionsList = Array.from({ length: 20 }).map((_, index) => ({
+    name: `test${index}`,
+  })) as any[];
+  for (const item of testLoadDataOptionsList) {
+    console.debug('loadData截流测试：', item)
+    if (item.name === 'test2') {
+      loadData({...item, ignoreThrottle:true}); // 强制忽略截流
+    }else if(item.name === 'test10'){
+      await delay(200) // 等待超过截流时间后调用
+      loadData(item);
+    }else{
+      loadData(item); // 普通调用被截流
+    }
+  }
   await testFetchData()
   // 上面的baseTable中已经触发了远程字典的updateDictData
   // 测试同时在此请求test_remote_dict_key字典,202409添加并行等待

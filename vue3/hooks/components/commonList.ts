@@ -7,6 +7,7 @@ import {
   toRaw,
 } from "vue-demi";
 import { structuredClone } from "@hykj-js/shared";
+import { useThrottleFn } from "@vueuse/core";
 
 /**
  * 主API的主参数
@@ -32,6 +33,10 @@ export type UseCommonListOptions<RowType = any> = {
    * 使用concat模式，实现瀑布流加载，通常是结合返回的hasNextPage和loadNextPage在移动端用
    */
   useConcat?: boolean;
+  /**
+   * loadData的节流时间
+   */
+  loadDataThrottleTime?: number;
 };
 
 /**
@@ -121,20 +126,11 @@ export type ListPagination = {
   sizes: number[];
 };
 
-/**
- * changeQuery方法的可选参数
- */
-export type ChangeQueryOptions = {
-  /**
-   * 去抖
-   */
-  debounce?: number;
-};
-
 export type LoadDataOptions = {
   loading?: boolean;
   resetConcat?: boolean;
-};
+  ignoreThrottle?: boolean;
+} & Partial<Event>;
 
 export const useCommonList = <RowType>(
   options: UseCommonListOptions<RowType>
@@ -181,10 +177,26 @@ export const useCommonList = <RowType>(
   const hasNextPage = computed(() => pagination.current < maxPage.value);
 
   /**
+   * 202501更新，loadData默认进行throttle处理
+   */
+  const loadDataThrottleFn = useThrottleFn(
+    loadDataRaw,
+    options.loadDataThrottleTime || 200
+  );
+  async function loadData(options?: LoadDataOptions) {
+    if (options?.ignoreThrottle) {
+      await loadDataRaw(options);
+      return;
+    }
+    await loadDataThrottleFn(options);
+  }
+
+  /**
    * 更新列表
    * @param options
    */
-  async function loadData(options?: LoadDataOptions & Partial<Event>) {
+  async function loadDataRaw(options?: LoadDataOptions) {
+    // console.debug("loadDataRaw run -> options: ", options);
     let l: RowType[] = [];
     let t = 0;
     let hasErr = false;
@@ -266,7 +278,7 @@ export const useCommonList = <RowType>(
       pagination.current = maxPage.value;
       if (!useConcat.value) {
         // 单页模式下自动刷新上一页数据
-        loadData();
+        loadData({ ignoreThrottle: true });
       }
     }
   }
@@ -277,7 +289,7 @@ export const useCommonList = <RowType>(
       loadData();
     }
   }
-
+  
   /**
    * 重置分页，这个函数不对外开放
    */
