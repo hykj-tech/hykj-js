@@ -17,7 +17,7 @@ declare global {
   // 全局方法定义
   type FetchDataFn = <DataType = any>(
     requestOptions: AxiosRequestConfigExtend
-  ) => Promise<[DataType | null, HttpRequestError | null]>;
+  ) => Promise<[DataType | null, HttpRequestError | null], AxiosResponse | null>;
 
   // 全局注入定义
   interface Window {
