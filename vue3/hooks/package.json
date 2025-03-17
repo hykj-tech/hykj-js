@@ -20,11 +20,11 @@
   },
   "dependencies": {
     "@hykj-js/shared": "workspace:^",
-    "@vueuse/core": "^12.3.0",
+    "@vueuse/core": ">=12.3.0",
      "vue-demi": ">=0.14.8"
   },
   "peerDependencies": {
     "@hykj-js/shared": "workspace:^",
-    "@vueuse/core": "^12.3.0"
+    "@vueuse/core": ">=12.3.0"
   }
 }
