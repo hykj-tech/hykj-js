@@ -126,7 +126,29 @@ const emit = defineEmits<{
   (e: 'error', file: UploadAnyFile, fileList: UploadAnyFile[]): void;
   // 每次上传行为结束触发一次
   (e: 'done', fileList: UploadAnyFile[]): void;
+  // 有文件删除
+  (e: 'remove', file: UploadAnyFile, fileList: UploadAnyFile[]): void;
+  // 发生变化时触发，包含success，error，remove
+  (e: 'changed', fileList: UploadAnyFile[]): void;
 }>();
+
+
+const emitEvent = {
+  success: (file: UploadAnyFile) => {
+    emit('success', file, state.fileList)
+    emit('changed', state.fileList)
+  },
+  error: (file: UploadAnyFile) => {
+    emit('error', file, state.fileList)
+    emit('changed', state.fileList)
+  },
+  // done事件和success以及error是包含关系，不会触发change
+  done: () => emit('done', state.fileList),
+  remove: (file: UploadAnyFile) => {
+    emit('remove', file, state.fileList)
+    emit('changed', state.fileList)
+  },
+}
 
 
 // 如果使用了fileItem的slot，那么.file-item的width就不能定死
@@ -239,6 +261,7 @@ function deleteFile(index: number) {
       }
       // 如果文件在上传中，取消上传
       state.fileList.splice(index, 1);
+      emitEvent.remove(file)
     })
     .catch((e: any) => {
       console.error(e);
@@ -429,11 +452,13 @@ async function normalUpload(file: UploadAnyFile) {
     file.raw!.response = res;
     updateFileId(file);
     updateFileUrl(file);
-    emit('success', file, state.fileList);
+    // emit('success', file, state.fileList);
+    emitEvent.success(file)
   } catch (err) {
     file.raw!.status = 'fail';
     console.error(err);
-    emit('error', file, state.fileList);
+    // emit('error', file, state.fileList);
+    emitEvent.error(file)
   } finally {
     checkUploading();
   }
