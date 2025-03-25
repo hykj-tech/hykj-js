@@ -105,6 +105,8 @@
     <concat-list />
     <h3>dictInput字典测试</h3>
     <dict-input-test />
+    <h3>uploadAny组件测试</h3>
+    <upload-any-test></upload-any-test>
   </div>
 </template>
 

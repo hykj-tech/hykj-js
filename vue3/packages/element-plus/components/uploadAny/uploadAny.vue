@@ -162,8 +162,16 @@ const inputAccept = computed(() => {
 // 获取组件允许的所有文件格式类型限制数组，将结合fileType和accept
 function getAllowedFileExtensionList() {
   const resultList = [] as string[]
-  if (props.accept && props.accept instanceof Array) {
-    resultList.push(...props.accept);
+  // accept可能是字符串，也可能是数组，如果是字符串，先转为数组
+  let acceptUse = props.accept
+  if (typeof acceptUse === 'string') {
+    // 支持逗号、换行、空格分隔
+    acceptUse = acceptUse.split(/,|\n|\s/).filter(i => i) || [] as string[] 
+  }
+  // 统一处理格式，如果格式里面包含.，去掉
+  acceptUse = acceptUse.map(i => i.replace(/\./g, ''))
+  if (acceptUse.length) {
+    resultList.push(...acceptUse);
   }
   if (props.fileType) {
     resultList.push(...getAcceptListFromFileType(props.fileType))

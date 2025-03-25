@@ -40,31 +40,52 @@ export type UploadAnySate ={
  * 组件属性
  */
 export type UploadAnyProps = {
-  // 是否允许上传多个
+  /** 
+   * 是否允许上传多个 
+   */
   multiple?: boolean;
-  // 上传的文件类型（预设类型），可多选(数组)，'image' | 'audio' | 'video' | 'document' | 'archive'
+  /** 
+   * 上传的文件类型（预设类型），可多选(数组)，
+   * 'image' | 'audio' | 'video' | 'document' | 'archive' 
+   */
   fileType?: FileType[] | 'image' | 'audio' | 'video' | 'document' | 'archive';
-  // 单独限制的格式,若fileType和accept都指定，将合并两者的限制,如只要显示上传pdf：:accept="['pdf']"
-  // image: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'],
-  // document: ['doc', 'docx', 'xls', 'xlsx', 'pdf', 'ppt', 'pptx'],
-  accept?: string[];
-  // 上传的文件大小限制
+  /** 
+   * 单独限制的格式,若fileType和accept都指定，将合并两者的限制,
+   * 如只要显示上传pdf：:accept="['pdf']" 支持逗号、换行、空格分隔，
+   * 对前缀.符号不敏感 
+   */
+  accept?: string | string[];
+  /** 
+   * 上传的文件大小限制 
+   */
   sizeLimit?: number;
-  // 上传的文件数量限制
+  /** 
+   * 上传的文件数量限制 
+   */
   limit?: number;
-  // 绑定的文件
+  /** 
+   * 绑定的文件 
+   */
   fileList?: UploadAnyFile[];
-  // 是否采用分片上传, 默认为自动超过5M使用分片上传
+  /** 
+   * 是否采用分片上传, 默认为自动超过5M使用分片上传 
+   */
   chunk?: boolean | 'auto';
-  // 是否禁用
+  /** 
+   * 是否禁用 
+   */
   disabled?: boolean;
-  // 独立模式，不使用文件列表显示，只使用本组件的上传逻辑
+  /** 
+   * 独立模式，不使用文件列表显示，只使用本组件的上传逻辑 
+   */
   standalone?: boolean;
-  // 储存桶命名,过于耦合业务，废弃，改用userContext自定义
-  // bucketModuleName?: string;
-  // 自定义beforeNormalUpload
+  /** 
+   * 自定义beforeNormalUpload 
+   */
   beforeNormalUpload?: (payload: BeforeNormalUploadPayload) => Promise<void>;
-  // 用户自定义上下文
+  /** 
+   * 用户自定义上下文，用于在beforeNormalUpload里面自定义传输参数 
+   */
   userContext?: UploadAnyUserContext;
 }
 
