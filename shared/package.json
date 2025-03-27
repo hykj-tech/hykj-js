@@ -1,6 +1,6 @@
 {
   "name": "@hykj-js/shared",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "shared libraries for hykj-js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
