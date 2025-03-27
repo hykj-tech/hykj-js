@@ -1,6 +1,6 @@
 {
   "name": "@hykj-js/vue3-hooks",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "vue3 common hook for hykj-js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
