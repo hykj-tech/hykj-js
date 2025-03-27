@@ -32,7 +32,7 @@ export type DictObj = {
  * 更新字典的选项
  */
 export type UpdateDictDataOptions = {
-  forceUpdate?: false;
+  forceUpdate?: boolean;
 };
 
 // 字典格式化map
