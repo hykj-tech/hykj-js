@@ -16,8 +16,13 @@ export class ObjectResolver<ObjectType> {
   private onResolveObjects: (ids: string[]) => Promise<ObjectType[]>;  
   // 用户使用的函数,，传入id列表，返回对象列表
   public resolveObjects = async (ids: string[]) => {
+    // 过滤ids，空的id不需要解析
+    const idsUse = ids.filter(id => id.trim() !== '').map(id => id.toString());
+    if (idsUse.length === 0) {
+      return [] as ObjectType[];
+    }
     // 先尝试查找store，找不到的话再调用用户自定义的解析函数，但是整个返回列表顺序要和ids一致
-    const objects: {id: string, obj: ObjectType | null}[] = ids.map(id => {
+    const objects: {id: string, obj: ObjectType | null}[] = idsUse.map(id => {
       const obj = this.objectStore.get(id)?.data || null;
       return {id, obj};
     });
@@ -35,11 +40,11 @@ export class ObjectResolver<ObjectType> {
       const resolvedObjects = await this.onResolveObjects(needResolveIds);
       resolvedObjects.forEach(obj => {
         const now = new Date();
-        this.objectStore.set(obj[this.objectIdKey], {data: obj, lastUpdateTime: now});
+        this.objectStore.set(obj[this.objectIdKey]?.toString(), {data: obj, lastUpdateTime: now});
       });
       objects.forEach(item => {
         if (item.obj === null) {
-          item.obj = resolvedObjects.find(obj => obj[this.objectIdKey] === item.id) || null;
+          item.obj = resolvedObjects.find(obj => obj[this.objectIdKey]?.toString() === item.id) || null;
         }
       });
     }

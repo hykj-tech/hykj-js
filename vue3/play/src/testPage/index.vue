@@ -112,6 +112,7 @@ import {
 } from "@hykj-js/vue3-hooks";
 import { delay } from "@hykj-js/shared";
 import { query, 人, 假数据库 } from "@/utils/mockData";
+import { useUserResolver } from "./resovler-test";
 
 // 测试commonToggle
 const { value: visible, toggle } = useCommonToggle();
@@ -226,6 +227,14 @@ const [state, resetState] = useResettableState({
 console.log('state', state)
 const [refState , resetRefState] = useResettableRef(1);
 console.log('refState', refState)
+
+
+// 测试objectResolver
+const [userResolver] = useUserResolver();
+onMounted(async () => {
+  const result = await userResolver.resolveObjects(['1','2','3']);
+  console.log('userResolver result', result)
+});
 </script>
 
 <style scoped></style>
