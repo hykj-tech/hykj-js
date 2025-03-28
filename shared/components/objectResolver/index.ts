@@ -17,7 +17,12 @@ export class ObjectResolver<ObjectType> {
   // 用户使用的函数,，传入id列表，返回对象列表
   public resolveObjects = async (ids: string[]) => {
     // 过滤ids，空的id不需要解析
-    const idsUse = ids.filter(id => id.trim() !== '').map(id => id.toString());
+    const idsUse = ids.filter(id => {
+      if(typeof id === 'string') {
+        return id.trim() !== '';
+      }
+      return Boolean(id);
+    }).map(id => id.toString());
     if (idsUse.length === 0) {
       return [] as ObjectType[];
     }

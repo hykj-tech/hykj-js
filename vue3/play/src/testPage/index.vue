@@ -90,6 +90,8 @@
       <el-button @click="resetRefState"> 重置 </el-button>  
       <el-input type="number" v-model="refState" />
     </div>
+    <h3>objectResolver测试</h3>
+    <el-button @click="testResolver"> 测试 </el-button>
   </div>
 </template>
 
@@ -231,10 +233,13 @@ console.log('refState', refState)
 
 // 测试objectResolver
 const [userResolver] = useUserResolver();
-onMounted(async () => {
+async function testResolver(){
   const result = await userResolver.resolveObjects(['1','2','3']);
+  // @ts-ignore
+  await userResolver.resolveObjects([null,null]);
+  await userResolver.resolveObjects(['','','']);
   console.log('userResolver result', result)
-});
+}
 </script>
 
 <style scoped></style>
