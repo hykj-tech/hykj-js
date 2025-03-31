@@ -603,10 +603,7 @@ async function ensureFileSizeInfo() {
   await Promise.allSettled(taskList)
 }
 
-// fileList参数和state中的fileList变化都执行fileSize更新检测
-watch(() => props.fileList, async () => {
-  await ensureFileSizeInfo()
-})
+// state中的fileList变化执行fileSize更新检测
 watch(() => state.fileList, async () => {
   await ensureFileSizeInfo()
 })
