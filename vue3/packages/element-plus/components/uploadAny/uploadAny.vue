@@ -185,7 +185,7 @@ const inputAccept = computed(() => {
 function getAllowedFileExtensionList() {
   const resultList = [] as string[]
   // accept可能是字符串，也可能是数组，如果是字符串，先转为数组
-  let acceptUse = props.accept
+  let acceptUse = props.accept || []
   if (typeof acceptUse === 'string') {
     // 支持逗号、换行、空格分隔
     acceptUse = acceptUse.split(/,|\n|\s/).filter(i => i) || [] as string[] 
