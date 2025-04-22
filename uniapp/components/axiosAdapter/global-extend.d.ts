@@ -12,6 +12,8 @@ declare global{
       filePath?: string;
       name?: string;
       formData?: Record<string, any>;
+      header?: Record<string, string>;
+      timeout?: number;
     };
   }
 }

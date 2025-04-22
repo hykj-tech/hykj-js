@@ -6,6 +6,14 @@ export const commonFileUpload = async (
   url: string,
   onProgress?: (progress: number) => void,
   signal?: AbortSignal,
+  otherParams?: {
+    // 仅支付宝小程序使用
+    fileType?: 'image' | 'video' | 'audio' 
+    header?: Record<string, string>
+    // 上传文件其他参数
+    formData?: Record<string, any>
+    timeout?: number
+  }, 
 ) => {
   return FetchData({
     url: url,
@@ -16,6 +24,9 @@ export const commonFileUpload = async (
       // file: file instanceof File ? file : undefined,
       file: file as File,
       filePath: typeof file === 'string' ? file : undefined,
+      header: otherParams?.header,
+      formData: otherParams?.formData,
+      timeout: otherParams?.timeout,
     },
     onUploadProgress: e => {
       if (onProgress) {

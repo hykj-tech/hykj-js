@@ -85,6 +85,9 @@ export const uniappAxiosAdapter = (config: AxiosRequestConfigExtend) => {
         ...uniRequestConfig,
         ...config.fileUploadParams,
         name: config.fileUploadParams?.name || 'file',
+        formData: config.fileUploadParams?.formData || undefined,
+        fileType: config.fileUploadParams?.fileType || undefined,
+        timeout: config.fileUploadParams?.timeout || undefined, 
         success(res) {
           const response = getResponse(res, config, uniRequestTask);
           resolve(response);
