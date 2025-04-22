@@ -84,6 +84,7 @@ export const uniappAxiosAdapter = (config: AxiosRequestConfigExtend) => {
       uniRequestTask = uni.uploadFile({
         ...uniRequestConfig,
         ...config.fileUploadParams,
+        header: Object.assign(uniRequestConfig.header, config.fileUploadParams?.header),
         name: config.fileUploadParams?.name || 'file',
         formData: config.fileUploadParams?.formData || undefined,
         fileType: config.fileUploadParams?.fileType || undefined,
