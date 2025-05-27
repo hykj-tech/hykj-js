@@ -309,7 +309,7 @@ export class HttpRequestError extends Error {
       this.type = "callback";
     }
     // 记录请求路径
-    const { baseURL, url, params } = this.#config;
+    const { baseURL, url, params } = this.#config || {};
     const urlFromConfig = (baseURL || "") + (url || "");
     // const paramsStringFromConfig = new URLSearchParams(params).toString();
     // 换一种写法，URLSearchParams在uni-app中不支持
