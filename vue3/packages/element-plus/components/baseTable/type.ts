@@ -23,7 +23,7 @@ export type BaseTablePagination = {
 /**
  * BaseTable组件属性
  */
-export type BaseTableProps = {
+export type BaseTableProps<RowType = any> = {
   /**
    * 是否使用teleported
    */ 
@@ -84,7 +84,7 @@ export type BaseTableProps = {
    * 自定义列，columns代表每一列的定义，都使用el-table-column的参数定义
    * 同时支持字典翻译，color，tooltip，formatter，styles，ellipsis几种功能 
    */
-  columns?: BaseTableColumn[]; 
+  columns?: BaseTableColumn<RowType>[]; 
    /**
     * 全局的列对齐
     */
@@ -96,7 +96,7 @@ export type BaseTableProps = {
   /**
    * 列表数据状态
    */ 
-  data?: any[];
+  data?: RowType[];
   /**
    * loading动画
    */

@@ -90,8 +90,8 @@
                 v-if="$slots[`item.${column.prop}`]"
                 :name="`item.${column.prop}`"
                 :allRow="data"
-                :row="scope.row"
-                :index="scope.$index + 1"
+                :row="(scope.row as RowType)"
+                :index="((scope.$index + 1) as number)"
                 :value="scope.row[column.prop]"
                 :valueShow="columnValueShow(column, scope.row, scope.$index)"
               ></slot>
@@ -136,7 +136,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup generic="RowType extends Object">
 import { Refresh, Operation } from "@element-plus/icons-vue";
 import type {
   BaseTableSate,
@@ -162,14 +162,15 @@ import {
   ElButton,
   vLoading,
 } from "element-plus";
+import { BaseTableColumn } from "./type";
 const TableConfiguration = defineAsyncComponent(
   () => import("./tableConfiguration.vue")
 );
 
-type Props = BaseTableProps;
+type Props = BaseTableProps<RowType>;
 
 // 组件的状态
-const state = reactive<BaseTableSate>({
+const state = reactive<BaseTableSate<RowType>>({
   // 自动高度
   tableHeight: 0,
   // 选中数据
@@ -415,11 +416,11 @@ function columnStyles(columnItem: any, row: any) {
 }
 
 // 每一列的数值
-function columnValueShow(columnItem: any, row: any, index?: number) {
+function columnValueShow(columnItem: BaseTableColumn<RowType>, row: RowType, index?: number): string {
   // 当前行的列值
   const columnValue = row[columnItem.prop];
   // 计算值
-  let valueShow = columnValue;
+  let valueShow: string | number = columnValue;
   // 字典翻译
   if (columnItem.dictKey && typeof columnItem.dictKey === "string") {
     const translate = dictTranslate(columnItem.dictKey, columnValue);
@@ -476,20 +477,20 @@ const emit = defineEmits<{
 }>();
 
 // 多选变化
-const handleSelectionChange = (selection: any) => {
+const handleSelectionChange = (selection: RowType[]) => {
   emit("selection-change", selection);
 };
 // 全选
-const selectAll = (selection: any) => {
+const selectAll = (selection: RowType[]) => {
   emit("select-all", selection);
 };
 // 单行选择变化
-const handleSelect = (selection: any, row: any) => {
+const handleSelect = (selection: RowType[], row: RowType) => {
   emit("select", selection, row);
 };
 // toggleRowSelection暴露
 const table = ref();
-const toggleRowSelection = (row: any, selected: boolean) => {
+const toggleRowSelection = (row: RowType, selected: boolean) => {
   table.value?.toggleRowSelection(row, selected);
 };
 // clearSelection暴露
@@ -497,14 +498,14 @@ const clearSelection = () => {
   table.value?.clearSelection();
 };
 // setCurrentRow暴露(设置高亮)
-const setCurrentRow = (row: any) => {
+const setCurrentRow = (row: RowType) => {
   table.value?.setCurrentRow(row);
 };
 const clickRefresh = () => {
   emit("refresh");
 };
 
-const rowClick = (row: any) => {
+const rowClick = (row: RowType) => {
   emit("row-click", row);
 };
 const tableConfiguration = ref();

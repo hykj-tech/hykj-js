@@ -88,7 +88,7 @@
       </div>
       <h4>原始类型</h4>
       <el-button @click="resetRefState"> 重置 </el-button>  
-      <el-input type="number" v-model="refState" />
+      <el-input type="number" v-model="refState.value" />
     </div>
     <h3>objectResolver测试</h3>
     <el-button @click="testResolver"> 测试 </el-button>
@@ -119,7 +119,7 @@ import { useUserResolver } from "./resovler-test";
 // 测试commonToggle
 const { value: visible, toggle } = useCommonToggle();
 // 测试commonList
-const columns: BaseTableColumn[] = [
+const columns: BaseTableColumn<人>[] = [
   {
     label: "姓名",
     prop: "name",
@@ -227,7 +227,7 @@ const [state, resetState] = useResettableState({
   name: "张三",
 });
 console.log('state', state)
-const [refState , resetRefState] = useResettableRef(1);
+const [refState , resetRefState] = useResettableRef('1');
 console.log('refState', refState)
 
 
