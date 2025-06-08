@@ -44,6 +44,11 @@ export type UploadAnyProps = {
    * 是否允许上传多个 
    */
   multiple?: boolean;
+  /**
+   * 默认渲染支持拖拽文件, 默认开启
+   * 
+   */
+  useDrag?: boolean;
   /** 
    * 上传的文件类型（预设类型），可多选(数组)，
    * 'image' | 'audio' | 'video' | 'document' | 'archive' 

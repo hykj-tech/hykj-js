@@ -1,5 +1,8 @@
 <template>
   <div>
+    <button @click="toggleUseDrag">
+      {{ useDrag ? '已开启拖拽上传' : '未开启拖拽上传' }}
+    </button>
     <upload-any
     :fileList="fileList"
     :beforeNormalUpload="beforeNormalUpload"
@@ -7,6 +10,8 @@
     @done="onDone"
     @changed="onChanged"
     @remove="onRemove"
+    :useDrag="useDrag"
+    :limit="2"
     >
     </upload-any>
   </div>
@@ -35,6 +40,12 @@ const onChanged = (fileList: UploadAnyFile[]) => {
 const onRemove = (file: UploadAnyFile) => {
   console.log('onRemove', file)
 }
+
+const useDrag = ref(true);
+
+const toggleUseDrag = () => {
+  useDrag.value = !useDrag.value;
+};
 </script>
 
 <style scoped>

@@ -25,6 +25,7 @@
     "@hykj-js/shared": "workspace:^",
     "@hykj-js/vue3-hooks": "workspace:^",
     "@vue/shared": "^3.3.11",
+    "@vueuse/core": "^12.3.0",
     "axios": "^1.6.5",
     "byte-size": "^8.1.1",
     "element-plus": "^2.4.3",
@@ -36,9 +37,9 @@
     "sass": "^1.72.0"
   },
   "peerDependencies": {
-    "vue": "^3.4.21",
-    "element-plus": "^2.4.3",
     "@hykj-js/shared": "workspace:^",
-    "@hykj-js/vue3-hooks": "workspace:^"
+    "@hykj-js/vue3-hooks": "workspace:^",
+    "element-plus": "^2.4.3",
+    "vue": "^3.4.21"
   }
 }

@@ -70,11 +70,13 @@
       <div class="upload-btn" v-if="props.standalone ? true : showUploadBtn" @click="clickChooseFile"
         :data-has-list="Boolean(state.fileList.length) && !props.standalone">
         <slot name="upload-btn">
-          <div class="plus-btn">
+          <div class="plus-btn" ref="plusBtnRef" :data-isOverDropZone="isOverDropZone && useDrag">
             <!--            <i class="plus-icon el-icon-plus"></i>-->
-            <el-icon :size="24" class="plus-icon">
-              <Plus></Plus>
+            <el-icon :size="24" class="plus-icon" >
+              <Upload v-if="isOverDropZone && useDrag"/>
+              <Plus v-else></Plus>
             </el-icon>
+            
           </div>
         </slot>
       </div>
@@ -84,9 +86,9 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, CircleCloseFilled, Refresh, Warning,CaretRight } from '@element-plus/icons-vue'
+import { Plus, CircleCloseFilled, Refresh, Warning,CaretRight, Upload } from '@element-plus/icons-vue'
 import { ElIcon } from 'element-plus'
-import { computed, onMounted, reactive, useSlots, watch } from 'vue';
+import { computed, onMounted, reactive, useSlots, watch, ref } from 'vue';
 import type { UploadAnyFile, UploadAnyProps, UploadAnySate } from './type';
 import { getFileTypeImage } from './assets';
 import {
@@ -105,7 +107,25 @@ import {
   BeforeNormalUploadPayload,
   onBeforeNormalUploadFuncList
 } from "./configUpload";
+import { useDropZone } from '@vueuse/core'
 
+// 默认渲染的添加按钮支持拖拽功能
+const plusBtnRef = ref<HTMLDivElement | null>(null);
+
+const { isOverDropZone } = useDropZone(plusBtnRef, {
+  onDrop,
+  // control multi-file drop
+  multiple: true,
+  // whether to prevent default behavior for unhandled events
+  preventDefaultForUnhandled: false,
+})
+
+function onDrop(files: File[]) {
+  if(props.useDrag === false) {
+    return;
+  }
+  inputFiles(files);
+}
 
 
 // 组件的props
@@ -117,6 +137,7 @@ const props = withDefaults(defineProps<UploadAnyProps>(), {
   chunk: 'auto',
   disabled: false,
   standalone: false,
+  useDrag: true,
 });
 
 const emit = defineEmits<{
@@ -660,6 +681,10 @@ defineExpose({
       .plus-icon {
         font-size: 24px;
         color: var(--uploadAny-btn-color);
+      }
+      &[data-isOverDropZone='true'] {
+        --uploadAny-btn-color: var(--uploadAny-active-color);
+        background: var(--uploadAny-active-bg);
       }
     }
   }
