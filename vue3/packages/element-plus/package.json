@@ -1,6 +1,6 @@
 {
   "name": "@hykj-js/vue3-element-plus",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "element-plus components for hykj-js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
