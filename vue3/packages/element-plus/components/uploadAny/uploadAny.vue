@@ -315,6 +315,7 @@ function cancelAllUpload() {
 // 通用传入文件上传方法, 这个方法直接给外部使用或者给fileInputChange使用
 async function inputFiles(files: File[]) {
   const rawFileList = files;
+  const fileListUse = [] as File[];
   // 校验当前文件列表数量是否超出limit，超出就按照顺序截断
   // 需要加上当前已经存在的fileList长度
   const fileLenNow = state.fileList.length + rawFileList.length;
@@ -330,7 +331,6 @@ async function inputFiles(files: File[]) {
         ElMessage.warning(
           `上传文件${file.name}不符合要求，仅支持${accept.join(',')}格式`
         );
-        rawFileList.splice(rawFileList.indexOf(file), 1);
         continue
       }
     }
@@ -340,11 +340,13 @@ async function inputFiles(files: File[]) {
       ElMessage.warning(
         `上传文件${file.name}不符合要求，文件大小不能超过${sizeLimitText}`
       );
-      rawFileList.splice(rawFileList.indexOf(file), 1);
+      continue
     }
+    // 如果通过了所有校验，就加入到fileListUse
+    fileListUse.push(file);
   }
   // 组装fileList
-  const fileList: UploadAnyFile[] = rawFileList.map(file => {
+  const fileList: UploadAnyFile[] = fileListUse.map(file => {
     const abortController = new AbortController();
     return {
       name: file.name,

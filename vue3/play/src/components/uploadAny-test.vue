@@ -9,9 +9,11 @@
     :accept="accept"
     @done="onDone"
     @changed="onChanged"
+    :multiple="true"
+    :fileType="['image', 'document']"
     @remove="onRemove"
     :useDrag="useDrag"
-    :limit="2"
+    :limit="5"
     >
     </upload-any>
   </div>
