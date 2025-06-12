@@ -88,7 +88,7 @@
       </div>
       <h4>原始类型</h4>
       <el-button @click="resetRefState"> 重置 </el-button>  
-      <el-input type="number" v-model="refState.value" />
+      <el-input type="number" v-model="refState" />
     </div>
     <h3>objectResolver测试</h3>
     <el-button @click="testResolver"> 测试 </el-button>
