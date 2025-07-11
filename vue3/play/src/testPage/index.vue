@@ -242,7 +242,7 @@ async function testResolver(){
   console.log('userResolver result', result)
 }
 async function testResolverDebounce() {
-  const list = ['5','6','7'];
+  const list = ['5','6','7', '7', '7', '7'];
   const result = await Promise.all(
     list.map((item) => {
       return userResolver.resolveObjects([item]);

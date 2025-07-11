@@ -131,7 +131,9 @@ export class ObjectResolver<ObjectType> {
       return;
     }
     const ids = queue.map((item) => item.ids).flat();
-    const objects = await this.resolveObjectsRaw(ids);
+    // 去重复
+    const uniqueIds = Array.from(new Set(ids));
+    const objects = await this.resolveObjectsRaw(uniqueIds);
     queue.forEach((item) => {
       // 分发
       const resolvedObjects = objects.filter((obj) =>
