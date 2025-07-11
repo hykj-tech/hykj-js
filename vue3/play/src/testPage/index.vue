@@ -92,6 +92,7 @@
     </div>
     <h3>objectResolver测试</h3>
     <el-button @click="testResolver"> 测试 </el-button>
+    <el-button @click="testResolverDebounce"> 测试快速解析去抖 </el-button>
   </div>
 </template>
 
@@ -114,7 +115,7 @@ import {
 } from "@hykj-js/vue3-hooks";
 import { delay } from "@hykj-js/shared";
 import { query, 人, 假数据库 } from "@/utils/mockData";
-import { useUserResolver } from "./resovler-test";
+import { useUserResolver } from "./resolver-test";
 
 // 测试commonToggle
 const { value: visible, toggle } = useCommonToggle();
@@ -239,6 +240,16 @@ async function testResolver(){
   await userResolver.resolveObjects([null,null]);
   await userResolver.resolveObjects(['','','']);
   console.log('userResolver result', result)
+}
+async function testResolverDebounce() {
+  const list = ['5','6','7'];
+  const result = await Promise.all(
+    list.map((item) => {
+      return userResolver.resolveObjects([item]);
+    })
+  );
+  // @ts-ignore
+  console.log('userResolver debounce result', result)
 }
 </script>
 
