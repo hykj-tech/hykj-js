@@ -40,7 +40,11 @@ export class ConfigUtil {
 
   // 获取配置，并安装应用到全局, 这里需要使用者自行定义扩展，因为xtendType需要指定
   public installConfig(modeKey: string, overrideConfig?: Partial<GlobalConfig>) {
-    const config = this.ConfigList[modeKey]
+    let config = this.ConfigList[modeKey]
+    if(!config){
+      console.error(`[hykj.js configUtil] 未找到${modeKey}对应的预设配置，应用可能不能正常运行，请注意代码中的预设配置注册定义`)
+      config = JSON.parse(JSON.stringify(emptyConfig)) // 如果没有找到对应的配置，则使用空配置
+    }
     // 根据当前platform，判断isBrowser和platform
     config.isBrowser = platformIsBrowser
     config.platform = Platform
