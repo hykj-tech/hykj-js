@@ -2,12 +2,12 @@ name: Publish Packages
 
 on:
   push:
-    branches: [main]
+    branches: [release]
     tags:
-      - 'shared*'
-      - 'uniapp*'
-      - 'vue3-hooks*'
-      - 'vue3-element-plus*'
+      - 'shared_v*'
+      - 'uniapp_v*'
+      - 'vue3-hooks_v*'
+      - 'vue3-element-plus_v*'
   workflow_dispatch:
     inputs:
       PACKAGE:
