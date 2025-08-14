@@ -1,43 +1,40 @@
-name: Publish Packages
-
-on:
-  push:
-    branches: [release]
-    tags:
-      - 'shared_v*'
-      - 'uniapp_v*'
-      - 'vue3-hooks_v*'
-      - 'vue3-element-plus_v*'
-  workflow_dispatch:
-    inputs:
-      PACKAGE:
-        description: 'The package to publish'
-        required: true
-        default: 'shared'
-        type: choice
-        options:
-          - shared
-          - uniapp
-          - vue3-hooks
-          - vue3-element-plus
-
-env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
 jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+      should_run: ${{ steps.set.outputs.should_run }}
+    steps:
+      - id: set
+        run: |
+          pkgs=()
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            pkgs+=("\"${{ github.event.inputs.PACKAGE }}\"")
+          else
+            for p in shared uniapp vue3-hooks vue3-element-plus; do
+              if [[ "${GITHUB_REF}" == refs/tags/${p}_* ]] || \
+                 [[ "${GITHUB_HEAD_COMMIT_MESSAGE}" == *"bump[${p}]"* ]]; then
+                pkgs+=("\"$p\"")
+              fi
+            done
+          fi
+
+          if [[ ${#pkgs[@]} -eq 0 ]]; then
+            echo "should_run=false" >> $GITHUB_OUTPUT
+            echo "matrix={\"package\":[]}" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=true" >> $GITHUB_OUTPUT
+            echo "matrix={\"package\":[${pkgs[*]}]}" >> $GITHUB_OUTPUT
+          fi
+
   publish:
+    needs: set-matrix
+    if: needs.set-matrix.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     container:
       image: node:lts
     strategy:
-      matrix:
-        package: [shared, uniapp, vue3-hooks, vue3-element-plus]
-    if: |
-      github.repository_owner == 'hykj-tech' && (
-        contains(github.event.head_commit.message, format('bump[{0}]', matrix.package)) ||
-        startsWith(github.ref, format('refs/tags/{0}', matrix.package)) ||
-        (github.event_name == 'workflow_dispatch' && inputs.PACKAGE == matrix.package)
-      )
+      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup pnpm
@@ -53,7 +50,5 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build ${{ matrix.package }}
         run: pnpm run build:${{ matrix.package }}
-      - name: Git status
-        run: git status
       - name: Publish ${{ matrix.package }}
         run: pnpm run publish:${{ matrix.package }}
