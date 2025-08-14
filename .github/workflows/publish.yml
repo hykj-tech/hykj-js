@@ -1,0 +1,59 @@
+name: Publish Packages
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'shared*'
+      - 'uniapp*'
+      - 'vue3-hooks*'
+      - 'vue3-element-plus*'
+  workflow_dispatch:
+    inputs:
+      PACKAGE:
+        description: 'The package to publish'
+        required: true
+        default: 'shared'
+        type: choice
+        options:
+          - shared
+          - uniapp
+          - vue3-hooks
+          - vue3-element-plus
+
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    container:
+      image: node:lts
+    strategy:
+      matrix:
+        package: [shared, uniapp, vue3-hooks, vue3-element-plus]
+    if: |
+      github.repository_owner == 'hykj-tech' && (
+        contains(github.event.head_commit.message, format('bump[{0}]', matrix.package)) ||
+        startsWith(github.ref, format('refs/tags/{0}', matrix.package)) ||
+        (github.event_name == 'workflow_dispatch' && inputs.PACKAGE == matrix.package)
+      )
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest-10 --activate
+          pnpm config set store-dir .pnpm-store
+      - name: Auth NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          echo "git-checks=false" >> ~/.npmrc
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+      - name: Build ${{ matrix.package }}
+        run: pnpm run build:${{ matrix.package }}
+      - name: Git status
+        run: git status
+      - name: Publish ${{ matrix.package }}
+        run: pnpm run publish:${{ matrix.package }}
