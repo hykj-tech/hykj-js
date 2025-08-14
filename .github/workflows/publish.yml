@@ -1,3 +1,31 @@
+name: Publish Packages
+
+on:
+  push:
+    branches: [release]
+    paths-ignore:
+      - '**/*' 
+    tags:
+      - 'shared_v*'
+      - 'uniapp_v*'
+      - 'vue3-hooks_v*'
+      - 'vue3-element-plus_v*'
+  workflow_dispatch:
+    inputs:
+      PACKAGE:
+        description: 'The package to publish'
+        required: true
+        default: 'shared'
+        type: choice
+        options:
+          - shared
+          - uniapp
+          - vue3-hooks
+          - vue3-element-plus
+
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 jobs:
   set-matrix:
     runs-on: ubuntu-latest
