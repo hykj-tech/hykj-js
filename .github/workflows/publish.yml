@@ -3,8 +3,6 @@ name: Publish Packages
 on:
   push:
     branches: [release]
-    paths-ignore:
-      - '**/*' 
     tags:
       - 'shared_v*'
       - 'uniapp_v*'
