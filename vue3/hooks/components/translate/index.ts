@@ -244,7 +244,7 @@ export function useDictData(dictKey: string, options?: UpdateDictDataOptions) {
 }
 
 // 转换字典数据
-function formatDictData(data: any[], formatKeyMap: FormatKeyMap, formatter: Formatter) {
+function formatDictData(data: any[], formatKeyMap?: FormatKeyMap, formatter?: Formatter) {
   const keyMap = formatKeyMap || {} as any;
   if (!keyMap.sort?.toString()) keyMap.sort = keyMap.value;
   if (!keyMap.style) keyMap.style = 'style';
@@ -273,7 +273,7 @@ function formatDictData(data: any[], formatKeyMap: FormatKeyMap, formatter: Form
     }
     if (keyMap.otherProps && keyMap.otherProps.length) {
       const otherProps = keyMap.otherProps;
-      otherProps.forEach(prop => {
+      otherProps.forEach((prop: string) => {
         if (item[prop]) {
           (formatObj as any)[prop] = item[prop];
         }

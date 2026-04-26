@@ -58,7 +58,7 @@
         ></el-table-column>
         <!-- 自定义列 -->
         <el-table-column
-          v-for="(column, columnIndex) of finalColumns"
+          v-for="(column, columnIndex) in renderedColumns"
           :key="column.prop + columnIndex"
           v-bind="column"
           :align="column.align ? column.align : columnAlign || 'left'"
@@ -163,7 +163,7 @@ import {
   vLoading,
 } from "element-plus";
 import { BaseTableColumn } from "./type";
-const TableConfiguration = defineAsyncComponent(
+const TableConfiguration: ReturnType<typeof defineAsyncComponent> = defineAsyncComponent(
   () => import("./tableConfiguration.vue")
 );
 
@@ -195,7 +195,7 @@ const props = withDefaults(defineProps<Props>(), {
   notZeroNumber: false,
   // columns: [],
   columnAlign: "",
-  tableOptions: null,
+  tableOptions: () => ({}),
   // data: [],
   loading: false,
   topActionsReverse: false,
@@ -229,22 +229,25 @@ watch(
 watch(
   () => [internalPagination.current, internalPagination.size],
   (newVal) => {
+    if (!props.pagination) return;
     const isCurrentChange = newVal[0] !== props.pagination.current;
     const isSizeChange = newVal[1] !== props.pagination.size;
     // 直接修改props中的pagination对象属性，随后才更新事件
     if (isCurrentChange) {
       props.pagination.current = internalPagination.current;
-      emit("current-change", internalPagination.current);
+      (emit as any)("current-change", internalPagination.current);
     }
     if (isSizeChange) {
       props.pagination.size = internalPagination.size;
-      emit("size-change", internalPagination.size);
+      (emit as any)("size-change", internalPagination.size);
     }
   }
 );
 
+// 模板使用的列副本（用于绕开 vue-tsc 在 computed 中推断递归类型时报警）
+const renderedColumns = computed((): any[] => finalColumns.value);
 // 最终渲染的列
-const finalColumns = computed(() => {
+const finalColumns = computed<Record<string, any>[]>(() => {
   return (
     state.internalColumns
       // 一些属性的转换
@@ -271,7 +274,7 @@ const finalColumns = computed(() => {
 const instance = getCurrentInstance();
 // 是否显示 topActions
 const showToActions = computed(() => {
-  return props.useTableTool || instance.slots["top-actions"];
+  return props.useTableTool || instance?.slots["top-actions"];
 });
 
 // 表格组件的父容器
@@ -384,7 +387,7 @@ function columnHeaderStyle(columnItem: any) {
 // 自定义每一列样式
 function columnStyles(columnItem: any, row: any) {
   // 当前行的列值
-  const columnValue = row[columnItem.prop];
+  const columnValue = row[columnItem.prop as string];
   // 最终的样式
   const style: styleType = {};
   // 自动让包含"时间"的列进行空格换行
@@ -410,7 +413,7 @@ function columnStyles(columnItem: any, row: any) {
   }
   // 自定义styles函数， 参数传入： 当前值、当前行、所有行
   if (columnItem.styles && typeof columnItem.styles === "function") {
-    Object.assign(style, columnItem.styles(columnValue, row, props.data));
+    Object.assign(style, columnItem.styles(columnValue, row, props.data || []));
   }
   return style;
 }
@@ -418,7 +421,7 @@ function columnStyles(columnItem: any, row: any) {
 // 每一列的数值
 function columnValueShow(columnItem: BaseTableColumn<RowType>, row: RowType, index?: number): string {
   // 当前行的列值
-  const columnValue = row[columnItem.prop];
+  const columnValue = (row as any)[columnItem.prop as string];
   // 计算值
   let valueShow: string | number = columnValue;
   // 字典翻译
@@ -432,7 +435,7 @@ function columnValueShow(columnItem: BaseTableColumn<RowType>, row: RowType, ind
   if (columnItem.prop === "$autoPageIndex") {
     let current = 1;
     let size = 10;
-    if (props.usePagination) {
+    if (props.usePagination && props.pagination) {
       current = props.pagination.current || 1;
       size = props.pagination.size || 10;
       valueShow = index! + 1 + (current - 1) * size;
@@ -442,7 +445,7 @@ function columnValueShow(columnItem: BaseTableColumn<RowType>, row: RowType, ind
   }
   // 自定义formatter函数, 参数传入： 当前值、当前行、所有行
   if (columnItem.formatter && typeof columnItem.formatter === "function") {
-    valueShow = columnItem.formatter(columnValue, row, props.data);
+    valueShow = columnItem.formatter(columnValue, row, props.data || []);
   }
   return formatEmpty(valueShow);
 }
@@ -460,20 +463,13 @@ function formatEmpty(value: any) {
 }
 
 const emit = defineEmits<{
-  // 多选变化
-  (e: "selection-change", selection: any): void;
-  // 全选
-  (e: "select-all", selection: any): void;
-  // 单行选择变化
-  (e: "select", selection: any, row: any): void;
-  // 点击刷新
-  (e: "refresh");
-  //页数
-  (e: "current-change", index: number);
-  // 页码
-  (e: "size-change", index: number);
-  // 行点击
-  (e: "row-click", row: any): void;
+  "selection-change": [selection: any];
+  "select-all": [selection: any];
+  select: [selection: any, row: any];
+  refresh: [];
+  "current-change": [index: number];
+  "size-change": [index: number];
+  "row-click": [row: any];
 }>();
 
 // 多选变化

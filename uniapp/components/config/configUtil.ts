@@ -60,7 +60,7 @@ export class ConfigUtil {
     // 这里不使用JSON.stringify，因为JSON.stringify会把key加上双引号，这里按照一行一行保持两个空格缩紧输出
     let str = `export default {\n`
     for (const key in config) {
-      str += `  ${key}: ${JSON.stringify(config[key])},\n`
+      str += `  ${key}: ${JSON.stringify((config as Record<string, unknown>)[key])},\n`
     }
     str += `}`
     return str

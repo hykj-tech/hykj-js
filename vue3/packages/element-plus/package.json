@@ -24,22 +24,22 @@
     "@element-plus/icons-vue": "^2.3.1",
     "@hykj-js/shared": "workspace:^",
     "@hykj-js/vue3-hooks": "workspace:^",
-    "@vue/shared": "^3.3.11",
-    "@vueuse/core": "^12.3.0",
-    "axios": "^1.6.5",
+    "@vue/shared": "^3.5.33",
+    "@vueuse/core": "^14.2.1",
+    "axios": "^1.15.2",
     "byte-size": "^8.1.1",
-    "element-plus": "^2.4.3",
+    "element-plus": "^2.13.7",
     "mitt": "^3.0.1",
-    "vue-demi": ">=0.14.8"
+    "vue-demi": ">=0.14.10"
   },
   "devDependencies": {
     "@types/byte-size": "^8.1.2",
-    "sass": "^1.72.0"
+    "sass": "^1.99.0"
   },
   "peerDependencies": {
     "@hykj-js/shared": "workspace:^",
     "@hykj-js/vue3-hooks": "workspace:^",
-    "element-plus": "^2.4.3",
-    "vue": "^3.4.21"
+    "element-plus": "^2.13.0",
+    "vue": "^3.5.0"
   }
 }

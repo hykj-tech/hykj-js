@@ -120,11 +120,11 @@ const { isOverDropZone } = useDropZone(plusBtnRef, {
   preventDefaultForUnhandled: false,
 })
 
-function onDrop(files: File[]) {
+function onDrop(files: File[] | null) {
   if(props.useDrag === false) {
     return;
   }
-  inputFiles(files);
+  if (files) inputFiles(files);
 }
 
 

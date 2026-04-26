@@ -5,3 +5,6 @@ dist
 vite.config.ts.timestamp*
 .npmrc
 .pnpm-store
+
+# Claude Code per-user local overrides
+.claude/settings.local.json

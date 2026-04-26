@@ -80,10 +80,10 @@ export const commonDownLoadFile = async (url: string, options?: IDownloadFileOpt
         })
         return
       }
-      savedFilePath = await wxSaveFileToDisk(res.tempFilePath, options)
+      savedFilePath = await wxSaveFileToDisk(res!.tempFilePath, options)
       if (!savedFilePath) {
         // 兜底方案，这个一般不会进入
-        savedFilePath = await normalSaveFileToDist(res.tempFilePath)
+        savedFilePath = await normalSaveFileToDist(res!.tempFilePath)
       }
     }
     // 检查文件是否保存好了
@@ -122,7 +122,7 @@ export const commonDownLoadFile = async (url: string, options?: IDownloadFileOpt
       },
     })
   } catch (e) {
-    console.log(e.message)
+    console.log((e as Error).message)
     console.error('[commonDownLoadFile] 下载文件失败', e)
     uni.hideLoading()
   }
@@ -320,7 +320,7 @@ async function downloadFileInApp(
           //下载成功
           // console.log("下载成功")
           //d.filename是文件在保存在本地的相对路径，使用下面的API可转为平台绝对路径
-          const fileSaveUrl = plus.io.convertLocalFileSystemURL(d.filename)
+          const fileSaveUrl = plus.io.convertLocalFileSystemURL(d.filename || '')
           // console.log(fileSaveUrl)
           // console.log(d.filename);
           ok(fileSaveUrl)

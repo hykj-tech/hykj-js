@@ -166,7 +166,7 @@ export const useCommonList = <RowType>(
   let loadDataLock: string | number = "";
   let defaultQuery: Record<any, any>;
   if (isReactive(options.query)) {
-    defaultQuery = structuredClone(toRaw(options.query));
+    defaultQuery = structuredClone(toRaw(options.query)) as Record<any, any>;
   } else {
     defaultQuery = structuredClone(options.query || {});
   }
@@ -303,9 +303,10 @@ export const useCommonList = <RowType>(
    */
   function resetQuery() {
     if (options?.query) {
+      const query = options.query as Record<string, any>;
       // 针对defaultQuery逐个字段赋值更新
       Object.keys(defaultQuery).forEach((key) => {
-        options.query[key] = defaultQuery[key];
+        query[key] = defaultQuery[key];
       });
     }
   }

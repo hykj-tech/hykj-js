@@ -14,4 +14,4 @@ export type { BeforeNormalUploadFunc, BeforeNormalUploadPayload} from './configU
 
 // 兜底生成httpUtil
 const httpUtil = new HttpUtil()
-window.FetchData = (c)=> httpUtil.FetchData.apply(httpUtil,[c])
+window.FetchData = ((c) => httpUtil.FetchData(c)) as FetchDataFn

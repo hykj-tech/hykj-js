@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import {  ref ,defineAsyncComponent} from "vue";
 import { ElSwitch, ElDrawer } from "element-plus";
-const baseTable = defineAsyncComponent(() => import('./table.vue'));
+const baseTable: ReturnType<typeof defineAsyncComponent> = defineAsyncComponent(() => import('./table.vue'));
 
 const drawer = ref(false);
 const direction = "rtl";
@@ -41,7 +41,7 @@ const toggle = (value?: boolean) => {
   drawer.value = value !== undefined ? value : !drawer.value;
 };
 const emit = defineEmits<{
-  (e: "change");
+  (e: "change"): void;
 }>();
 const changeRow = (row: any, value: boolean) => {
   row.hide = !value;

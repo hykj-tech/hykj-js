@@ -15,7 +15,7 @@ export class StaticFileUtil{
   private localStaticPathPrefix: string = '/static/'
   // 是否默认启用远程文件
   private defaultUseRemote: boolean = false
-  private remoteUrl: string | remoteUrlFn 
+  private remoteUrl: string | remoteUrlFn = ''
   constructor(StaticFileConfig: {localStaticPathPrefix?: string, defaultUseRemote?: boolean, remoteUrl?:string | remoteUrlFn}) {
     if (StaticFileConfig.localStaticPathPrefix) {
       this.localStaticPathPrefix = StaticFileConfig.localStaticPathPrefix

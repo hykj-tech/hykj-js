@@ -107,6 +107,7 @@ export const uniappAxiosAdapter = (config: AxiosRequestConfigExtend) => {
             loaded: res.totalBytesSent,
             total: res.totalBytesExpectedToSend,
             bytes: res.totalBytesExpectedToSend,
+            lengthComputable: true,
           };
           config.onUploadProgress(processEvent);
         }
@@ -147,6 +148,7 @@ export const uniappAxiosAdapter = (config: AxiosRequestConfigExtend) => {
             loaded: res.totalBytesWritten,
             total: res.totalBytesExpectedToWrite,
             bytes: res.totalBytesExpectedToWrite,
+            lengthComputable: true,
           };
           config.onDownloadProgress(processEvent);
         }

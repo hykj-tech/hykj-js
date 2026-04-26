@@ -27,7 +27,7 @@ export function useList<RowType>(options: UseListOptions<RowType>){
   const deleteRow = async (row: RowType)=>{
     useCommonListApi.setRowNow(row)
     const titleKey = options?.rowTitleKey || defaultRowTitleKey
-    const rowTitle = row[titleKey] || '';
+    const rowTitle = (row as Record<string, any>)[titleKey] || '';
     const objName = rowTitle? `"${rowTitle}"` : '';
     const message = `
         <span>数据</span><span style="color: red">${objName}</span><span>将被删除，是否继续？</span>

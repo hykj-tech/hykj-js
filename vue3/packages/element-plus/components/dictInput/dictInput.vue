@@ -45,11 +45,11 @@
           style="width: 100%"
           v-model="_value"
           :data="dictData"
-          :props="{
-          value: valueKey,
-          label: labelKey,
-          disabled: treeOptionsToUse.treeNodeDisabled,
-          }"
+          :props="({
+            value: valueKey,
+            label: labelKey,
+            disabled: treeOptionsToUse.treeNodeDisabled,
+          } as any)"
           :size="treeOptionsToUse.size"
           :loading="loading && !disableLoading"
           :clearable="treeOptionsToUse.clearable"
@@ -260,11 +260,13 @@ function change(value: string | number | string[] | number[]) {
   emit('change', value)
 }
 
-function getStyle(v) {
-  return v ? safeJSONParse(v) : ''
+function getStyle(v: string | Record<string, string> | undefined) {
+  if (!v) return ''
+  if (typeof v === 'object') return v
+  return safeJSONParse(v)
 }
 
-let timeout;
+let timeout: ReturnType<typeof setTimeout> | undefined;
 onMounted(() => {
   timeout = setTimeout(() => {
     internalState.loadingTimeout = true

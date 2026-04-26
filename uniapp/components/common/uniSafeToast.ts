@@ -1,5 +1,6 @@
+type ToastEntry = { duration: number; time: number; options: Partial<UniApp.ShowToastOptions> };
 // 记录当前调用的showToast流程
-let globalToastList = [];
+let globalToastList: ToastEntry[] = [];
 export const setUpUniSafeToast = ()=>{
   const originShowLoading = uni.showLoading;
   const originHideLoading = uni.hideLoading;

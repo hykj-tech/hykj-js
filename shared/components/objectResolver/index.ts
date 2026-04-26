@@ -13,7 +13,7 @@ type ObjectResolverOptions = {
 
 type ResolveRequestQueue<ObjectType> = {
     ids: string[];
-    resolve: (objects: ObjectType[]) => void | null;
+    resolve: ((objects: ObjectType[]) => void) | null;
   }
 export class ObjectResolver<ObjectType> {
   private objectStore: Map<string, ObjectInStore<ObjectType>> = new Map<
@@ -70,7 +70,7 @@ export class ObjectResolver<ObjectType> {
       const resolvedObjects = await this.onResolveObjects(needResolveIds);
       resolvedObjects.forEach((obj) => {
         const now = new Date();
-        this.objectStore.set(obj[this.objectIdKey]?.toString(), {
+        this.objectStore.set((obj as any)[this.objectIdKey]?.toString(), {
           data: obj,
           lastUpdateTime: now,
         });
@@ -79,7 +79,7 @@ export class ObjectResolver<ObjectType> {
         if (item.obj === null) {
           item.obj =
             resolvedObjects.find(
-              (obj) => obj[this.objectIdKey]?.toString() === item.id
+              (obj) => (obj as any)[this.objectIdKey]?.toString() === item.id
             ) || null;
         }
       });
@@ -126,7 +126,7 @@ export class ObjectResolver<ObjectType> {
     const queue = this.resolveRequestQueue;
     if (this.resolveRequestQueue.length === 0) {
       queue.forEach((item) => {
-        item.resolve([]);
+        item.resolve?.([]);
       });
       return;
     }
@@ -137,7 +137,7 @@ export class ObjectResolver<ObjectType> {
     queue.forEach((item) => {
       // 分发
       const resolvedObjects = objects.filter((obj) =>
-        item.ids.includes(obj[this.objectIdKey]?.toString())
+        item.ids.includes((obj as any)[this.objectIdKey]?.toString())
       );
       if (item.resolve) {
         item.resolve(resolvedObjects);

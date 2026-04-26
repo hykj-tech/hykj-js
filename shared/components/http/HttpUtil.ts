@@ -92,7 +92,7 @@ export class HttpUtil {
         if (err) {
           return Promise.reject(err);
         }
-        return res;
+        return res!;
       },
       (error) => {
         if (!error.config) {
@@ -140,7 +140,7 @@ export class HttpUtil {
           }
         }
       } catch (err) {
-        err.isCallbackError = true;
+        (err as any).isCallbackError = true;
         throw err;
       }
       res = await this.axiosInstance({
@@ -151,23 +151,24 @@ export class HttpUtil {
       if (this.afterFetchDataCallbackList.length) {
         try {
           for (const callback of this.afterFetchDataCallbackList) {
-            await callback(res);
+            await callback(res!);
           }
         } catch (err) {
-          err.isCallbackError = true;
+          (err as any).isCallbackError = true;
           throw err;
         }
       }
-      return [res.data as DataType, null, res];
+      return [res!.data as DataType, null, res];
     } catch (err) {
-      if (err.isCallbackError && res) {
-        err.response = res;
-        err.config = res.config;
+      const e = err as any;
+      if (e.isCallbackError && res) {
+        e.response = res;
+        e.config = res.config;
         res.request = res.request;
       }
-      let error: HttpRequestError = err;
+      let error: HttpRequestError = e;
       if (!(error instanceof HttpRequestError)) {
-        error = new HttpRequestError(err, requestOptions.url);
+        error = new HttpRequestError(e, requestOptions.url);
       }
       try {
         if (this.onFetchDataErrorCallbackList.length) {
@@ -324,7 +325,7 @@ export class HttpRequestError extends Error {
       (urlFromConfig || urlInput) +
       (paramsStringFromConfig ? `?${paramsStringFromConfig}` : "");
   }
-  get config(): InternalAxiosRequestConfig & AxiosRequestConfigExtend {
+  get config(): (InternalAxiosRequestConfig & AxiosRequestConfigExtend) | undefined {
     return this.#config;
   }
   get response(): AxiosResponse | undefined {
