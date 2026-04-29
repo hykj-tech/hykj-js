@@ -22,9 +22,6 @@ on:
           - vue3-element-plus
           - skills
 
-env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
 jobs:
   set-matrix:
     runs-on: ubuntu-latest
@@ -56,6 +53,9 @@ jobs:
   publish:
     needs: set-matrix
     if: needs.set-matrix.outputs.should_run == 'true'
+    permissions:
+      id-token: write
+      contents: read
     runs-on: ubuntu-latest
     container:
       image: node:lts
@@ -68,9 +68,9 @@ jobs:
           corepack enable
           corepack prepare pnpm@latest-10 --activate
           pnpm config set store-dir .pnpm-store
-      - name: Auth NPM
+      - name: Configure npm
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          echo "registry=https://registry.npmjs.org/" > ~/.npmrc
           echo "git-checks=false" >> ~/.npmrc
       - name: Install deps
         run: pnpm install --frozen-lockfile
@@ -78,3 +78,5 @@ jobs:
         run: pnpm run build:${{ matrix.package }}
       - name: Publish ${{ matrix.package }}
         run: pnpm run publish:${{ matrix.package }}
+        env:
+          NPM_CONFIG_PROVENANCE: true
