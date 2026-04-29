@@ -1,0 +1,15 @@
+{
+  "name": "@hykj-js/skills",
+  "version": "0.1.0",
+  "description": "Claude Code skills for @hykj-js/* packages",
+  "type": "module",
+  "bin": {
+    "hykj-skills": "./bin/cli.mjs"
+  },
+  "files": [
+    "bin",
+    "skills"
+  ],
+  "keywords": ["claude-code", "skills", "hykj-js"],
+  "license": "MIT"
+}
