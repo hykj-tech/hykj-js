@@ -16,6 +16,10 @@
     "hykj-js"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hykj-tech/hykj-js.git"
+  },
   "publishConfig": {
     "access": "public"
   },

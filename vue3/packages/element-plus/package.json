@@ -12,6 +12,10 @@
   ],
   "author": "www.hykj.site",
   "license": "Proprietary",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hykj-tech/hykj-js.git"
+  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

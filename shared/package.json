@@ -8,6 +8,10 @@
   "keywords": ["hykj-js"],
   "author": "www.hykj.site",
   "license": "Proprietary",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hykj-tech/hykj-js.git"
+  },
   "private": false,
   "publishConfig": {
     "access": "public",
