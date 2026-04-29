@@ -11,11 +11,13 @@
     "build:vue3-element-plus": "pnpm build:vue3-hooks && pnpm --filter vue3-element-plus run build",
     "build:vue3-hooks": "pnpm build:shared && pnpm --filter vue3-hooks run build",
     "build:shared": "pnpm --filter shared run build",
-    "publish:all": "pnpm run publish:shared && pnpm run publish:uniapp && pnpm run publish:vue3-hooks && pnpm run publish:vue3-element-plus",
+    "build:skills": "pnpm --filter skills run build",
+    "publish:all": "pnpm run publish:shared && pnpm run publish:uniapp && pnpm run publish:vue3-hooks && pnpm run publish:vue3-element-plus && pnpm run publish:skills",
     "publish:shared": "pnpm -r --filter shared publish",
     "publish:uniapp": "pnpm -r --filter uniapp publish",
     "publish:vue3-hooks": "pnpm -r --filter vue3-hooks publish",
-    "publish:vue3-element-plus": "pnpm -r --filter vue3-element-plus publish"
+    "publish:vue3-element-plus": "pnpm -r --filter vue3-element-plus publish",
+    "publish:skills": "pnpm -r --filter skills publish"
   },
   "keywords": [],
   "author": "",

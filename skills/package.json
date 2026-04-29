@@ -16,6 +16,9 @@
     "hykj-js"
   ],
   "license": "MIT",
+  "scripts": {
+    "build": "echo 'skills is pure JS, no build needed'"
+  },
   "dependencies": {
     "commander": "^14.0.3"
   }

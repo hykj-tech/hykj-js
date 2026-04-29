@@ -8,6 +8,7 @@ on:
       - 'uniapp_v*'
       - 'vue3-hooks_v*'
       - 'vue3-element-plus_v*'
+      - 'skills_v*'
   workflow_dispatch:
     inputs:
       PACKAGE:
@@ -20,6 +21,7 @@ on:
           - uniapp
           - vue3-hooks
           - vue3-element-plus
+          - skills
 
 env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -37,7 +39,7 @@ jobs:
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
             pkgs+=("\"${{ github.event.inputs.PACKAGE }}\"")
           else
-            for p in shared uniapp vue3-hooks vue3-element-plus; do
+            for p in shared uniapp vue3-hooks vue3-element-plus skills; do
               if [[ "${GITHUB_REF}" == refs/tags/${p}_* ]] || \
                  [[ "${GITHUB_HEAD_COMMIT_MESSAGE}" == *"bump[${p}]"* ]]; then
                 pkgs+=("\"$p\"")
