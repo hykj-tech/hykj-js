@@ -16,6 +16,9 @@
     "hykj-js"
   ],
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "echo 'skills is pure JS, no build needed'"
   },
