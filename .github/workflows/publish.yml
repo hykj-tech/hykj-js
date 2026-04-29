@@ -2,7 +2,6 @@ name: Publish Packages
 
 on:
   push:
-    branches: [release]
     tags:
       - 'shared_v*'
       - 'uniapp_v*'
@@ -40,8 +39,7 @@ jobs:
             pkgs+=("\"${{ github.event.inputs.PACKAGE }}\"")
           else
             for p in shared uniapp vue3-hooks vue3-element-plus skills; do
-              if [[ "${GITHUB_REF}" == refs/tags/${p}_* ]] || \
-                 [[ "${GITHUB_HEAD_COMMIT_MESSAGE}" == *"bump[${p}]"* ]]; then
+              if [[ "${GITHUB_REF}" == refs/tags/${p}_* ]]; then
                 pkgs+=("\"$p\"")
               fi
             done
