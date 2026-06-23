@@ -11,7 +11,7 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['axios', 'dayjs', 'lodash-es', 'loglevel', 'qs'],
+      external: ['axios', /^dayjs(\/.*)?$/, 'lodash-es', 'loglevel', 'qs'],
       output: {
         globals: {
           axios: 'axios',
