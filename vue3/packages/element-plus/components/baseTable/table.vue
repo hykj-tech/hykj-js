@@ -528,7 +528,7 @@ watch(
 );
 </script>
 <style lang="scss">
-@import "./style";
+@use "./style";
 </style>
 <style lang="scss" scoped>
 .cpBaseTable {
