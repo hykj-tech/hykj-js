@@ -1,12 +1,12 @@
 // dayjs
 import dayjs from 'dayjs'
-import zh from 'dayjs/locale/zh-cn'
+import 'dayjs/locale/zh-cn'
 
 /**
  * 初始化dayjs，将挂载全局dayjs对象
  */
 export const initDayjs = () => {
-  dayjs.locale(zh)
+  dayjs.locale('zh-cn')
   // 扩展dayjs默认format功能
   const defaultFormat = 'YYYY-MM-DD HH:mm:ss'
   dayjs.extend((option, dayjsClass, dayjsFactory) => {
