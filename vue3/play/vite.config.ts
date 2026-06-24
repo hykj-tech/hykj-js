@@ -24,12 +24,12 @@ export default defineConfig(({ mode, command }) => {
       // auto import
       AutoImport({
         imports: ["vue", "vue-router", "pinia"],
-        resolvers: [ElementPlusResolver()],
+        resolvers: [ElementPlusResolver({ importStyle: false })],
         dts: "src/auto-imports.d.ts",
       }),
       // vue auto components
       Components({
-        resolvers: [ElementPlusResolver()],
+        resolvers: [ElementPlusResolver({ importStyle: false })],
         dts: "src/components.d.ts",
       }),
     ],
